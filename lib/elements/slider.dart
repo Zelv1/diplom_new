@@ -1,4 +1,6 @@
 import 'package:action_slider/action_slider.dart';
+import 'package:diplom_new/util/color.dart';
+import 'package:diplom_new/util/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class SliderOrder extends StatelessWidget {
@@ -15,13 +17,13 @@ class SliderOrder extends StatelessWidget {
       toggleColor: const Color.fromARGB(255, 35, 33, 33),
       width: MediaQuery.of(context).size.width * 0.9,
       height: MediaQuery.of(context).size.height * 0.08,
-      backgroundColor: Colors.white,
+      backgroundColor: whiteColor,
       icon: const Icon(Icons.arrow_forward_ios_rounded,
-          color: Colors.white, size: 33),
+          color: whiteColor, size: 33),
       loadingIcon: const CircularProgressIndicator(
-        color: Colors.white,
+        color: whiteColor,
       ),
-      successIcon: const Icon(Icons.check, color: Colors.white),
+      successIcon: const Icon(Icons.check, color: whiteColor),
       action: (controller) async {
         controller.loading();
         await Future.delayed(const Duration(seconds: 1));
@@ -29,8 +31,7 @@ class SliderOrder extends StatelessWidget {
         await Future.delayed(const Duration(seconds: 1));
         onBack();
       },
-      child: const Text('Заказ выдан',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+      child: Text('Заказ выдан', style: headerTextStyleBlack),
     );
   }
 }

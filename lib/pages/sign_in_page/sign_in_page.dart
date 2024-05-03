@@ -1,4 +1,13 @@
+// ignore_for_file: non_constant_identifier_names
+import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
+//import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/pages/main_page/main_page_courier.dart';
+import 'package:diplom_new/pages/main_page/main_page_vendor.dart';
+import 'package:diplom_new/util/color.dart';
+import 'package:diplom_new/util/text_styles.dart';
+import 'package:diplom_new/util/underline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -8,189 +17,178 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  TextEditingController controllerUserName = TextEditingController();
+  TextEditingController controllerPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: MediaQuery.of(context).size.height * 0.15),
-          SignInLogo(),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.08),
-          SignInTextFields(context),
-          GrayLine(),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.04),
-          SignInButton(),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-          ForgetButton()
-        ],
-      ),
+        body: BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthSuccessState) {
+          if (state.user.courier == null) {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const MainPageVendor()));
+          } else {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const MainPageCourier()));
+          }
+        }
+      },
+      builder: (context, state) {
+        if (state is AuthWaitCredentialsState) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height * 0.15),
+                SignInLogo(),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+                SignInTextFields(context),
+                GrayLine(),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                SignInButton(),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+                ForgetButton()
+              ],
+            ),
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     ));
   }
 
-  Container GrayLine() {
-    return Container(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 350, maxHeight: 55),
-        child: const Divider(
-          color: Colors.grey,
-          thickness: 1,
-          height: 0,
-        ),
-      ),
+  ConstrainedBox GrayLine() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 350, maxHeight: 55),
+      child: const UnderLine(),
     );
   }
 
-  Container ForgetButton() {
-    return Container(
-      child: TextButton(
-          onPressed: () => {},
-          child: const Text(
-            'Забыли логин или пароль?',
-            style: TextStyle(
-                fontSize: 13,
-                color: Color.fromARGB(255, 35, 33, 33),
-                fontWeight: FontWeight.w300),
-          )),
-    );
+  TextButton ForgetButton() {
+    return TextButton(
+        onPressed: () => {},
+        child: Text(
+          'Забыли логин или пароль?',
+          style: mainTextStyleBlack,
+        ));
   }
 
   Row SignInLogo() {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('Авторизация',
-            style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                color: Color.fromARGB(255, 35, 33, 33)))
-      ],
+      children: [Text('Авторизация', style: authTag)],
     );
   }
 
   Container SignInButton() => Container(
       decoration: BoxDecoration(
-          color: Colors.black, borderRadius: BorderRadius.circular(10)),
+          color: blackColor, borderRadius: BorderRadius.circular(10)),
       child: ElevatedButton(
-          onPressed: () => {},
+          onPressed: () => {
+                context.read<AuthBloc>().add(AuthLoginEvent(
+                    username: controllerUserName.text,
+                    password: controllerPassword.text))
+              },
           style: ElevatedButton.styleFrom(
             fixedSize: const Size(350, 55),
-            backgroundColor: const Color.fromARGB(255, 35, 33, 33),
+            backgroundColor: blackColor,
           ),
-          child: const Text('Войти',
-              style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                  color: Colors.white))));
+          child: Text('Войти', style: headerTextStyleWhite)));
 
-  Container SignInTextFields(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 350, maxHeight: 55),
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Логин',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Color.fromARGB(255, 35, 33, 33)),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Text(''),
-                  )
-                ],
-              ),
+  Column SignInTextFields(BuildContext context) {
+    return Column(
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 350, maxHeight: 55),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Text('Логин', style: headerTextStyleBlack),
+                ),
+                const Expanded(
+                  flex: 3,
+                  child: Text(''),
+                )
+              ],
             ),
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-          ConstrainedBox(
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 350, maxHeight: 55),
+          child: TextFormField(
+            controller: controllerUserName,
+            textAlign: TextAlign.left,
+            decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(15),
+                alignLabelWithHint: true,
+                enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: blackColor, width: 1),
+                    borderRadius: BorderRadius.circular(10)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: blackColor, width: 1),
+                    borderRadius: BorderRadius.circular(11)),
+                hintText: 'Введите логин',
+                prefixIcon: const Icon(Icons.text_rotation_none),
+                hintStyle: hintText),
+          ),
+        ),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 350, maxHeight: 55),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    'Пароль',
+                    style: headerTextStyleBlack,
+                  ),
+                ),
+                const Expanded(
+                  flex: 3,
+                  child: Text(''),
+                )
+              ],
+            ),
+          ),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.01,
+        ),
+        ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 350, maxHeight: 55),
             child: TextFormField(
+              controller: controllerPassword,
               textAlign: TextAlign.left,
+              obscureText: true,
               decoration: InputDecoration(
                   contentPadding: const EdgeInsets.all(15),
                   alignLabelWithHint: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 35, 33, 33), width: 1),
+                      borderSide: const BorderSide(color: blackColor, width: 1),
                       borderRadius: BorderRadius.circular(10)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 35, 33, 33), width: 1),
+                      borderSide: const BorderSide(color: blackColor, width: 1),
                       borderRadius: BorderRadius.circular(11)),
-                  hintText: 'Введите логин',
-                  prefixIcon: const Icon(Icons.phone),
-                  hintStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.grey)),
-            ),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 350, maxHeight: 55),
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Пароль',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Color.fromARGB(255, 35, 33, 33)),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Text(''),
-                  )
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.01,
-          ),
-          ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 350, maxHeight: 55),
-              child: TextFormField(
-                textAlign: TextAlign.left,
-                obscureText: true,
-                decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(15),
-                    alignLabelWithHint: true,
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 35, 33, 33), width: 1),
-                        borderRadius: BorderRadius.circular(10)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 35, 33, 33), width: 1),
-                        borderRadius: BorderRadius.circular(11)),
-                    hintText: 'Введите пароль',
-                    prefixIcon: const Icon(Icons.key),
-                    hintStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey)),
-              )),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.04,
-          ),
-        ],
-      ),
+                  hintText: 'Введите пароль',
+                  prefixIcon: const Icon(Icons.key),
+                  hintStyle: hintText),
+            )),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.04,
+        ),
+      ],
     );
   }
 }

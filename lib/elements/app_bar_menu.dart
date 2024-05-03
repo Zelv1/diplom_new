@@ -1,5 +1,12 @@
+import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
+import 'package:diplom_new/pages/history_page/history_page_courier.dart';
 import 'package:diplom_new/pages/main_page/main_page_courier.dart';
+import 'package:diplom_new/pages/sign_in_page/sign_in_page.dart';
+import 'package:diplom_new/util/color.dart';
+import 'package:diplom_new/util/text_styles.dart';
+import 'package:diplom_new/util/underline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class AppBarMenu extends StatelessWidget {
@@ -9,78 +16,92 @@ class AppBarMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      backgroundColor: Colors.white,
-      child: ListView(
-        children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 35, 33, 33),
-            ),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthSuccessState) {
+          return Drawer(
+            backgroundColor: whiteColor,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.account_circle_sharp,
-                  size: 60,
+                Expanded(
+                  child: ListView(
+                    children: [
+                      DrawerHeader(
+                        decoration: const BoxDecoration(
+                          color: blackColor,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              radius: 40,
+                              child: ClipOval(
+                                child: Image.network(
+                                  state.user.courier!.image.toString(),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Text(state.user.courier!.name,
+                                style: headerTextStyleWhite),
+                            Text(state.user.courier!.number,
+                                style: mainTextStyleWhite)
+                          ],
+                        ),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.dark_mode_rounded),
+                        title: Text('Темная тема', style: mainTextStyleBlack),
+                        trailing: const SwitchButton(),
+                      ),
+                      const UnderLine(),
+                      ListTile(
+                        leading: const Icon(Icons.history),
+                        title: Text('История', style: mainTextStyleBlack),
+                        onTap: () => {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const HistoryPageCourier()))
+                        },
+                      ),
+                      const UnderLine(),
+                      ListTile(
+                        leading: const Icon(Icons.phone_android_rounded),
+                        title:
+                            Text('Вызов менеджера', style: mainTextStyleBlack),
+                        onTap: () async {
+                          FlutterPhoneDirectCaller.callNumber('+375295601300');
+                        },
+                      ),
+                      const UnderLine(),
+                    ],
+                  ),
                 ),
-                Text('Имя',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500)),
-                Text('+375(99)999-99-99',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w300))
+                ListTile(
+                  leading: const Icon(Icons.exit_to_app),
+                  title: Text('Выйти из аккаунта', style: mainTextStyleBlack),
+                  onTap: () {
+                    context.read<AuthBloc>().add(AuthLogoutEvent());
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInPage()),
+                    );
+                  },
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 1),
+                  child: UnderLine(),
+                ),
               ],
             ),
-          ),
-          const ListTile(
-            leading: Icon(Icons.dark_mode_rounded),
-            title: Text('Темная тема',
-                style: TextStyle(
-                    color: Color.fromARGB(255, 35, 33, 33),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w300)),
-            trailing: SwitchButton(),
-          ),
-          GrayLine(context),
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: const Text('История',
-                style: TextStyle(
-                    color: Color.fromARGB(255, 35, 33, 33),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w300)),
-            onTap: () => {},
-          ),
-          GrayLine(context),
-          ListTile(
-            leading: const Icon(Icons.phone_android_rounded),
-            title: const Text('Вызов менеджера',
-                style: TextStyle(
-                    color: Color.fromARGB(255, 35, 33, 33),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w300)),
-            onTap: () async {
-              FlutterPhoneDirectCaller.callNumber('+375295601300');
-            },
-          ),
-          GrayLine(context),
-        ],
-      ),
-    );
-  }
-
-  Divider GrayLine(BuildContext context) {
-    return Divider(
-      color: Colors.grey,
-      thickness: 1,
-      height: 0,
-      indent: MediaQuery.of(context).size.width * 0.03,
-      endIndent: MediaQuery.of(context).size.width * 0.03,
+          );
+        } else {
+          return const Center();
+        }
+      },
     );
   }
 }

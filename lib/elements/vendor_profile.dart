@@ -1,4 +1,12 @@
+// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api
+
+import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
+import 'package:diplom_new/pages/sign_in_page/sign_in_page.dart';
+import 'package:diplom_new/util/color.dart';
+import 'package:diplom_new/util/text_styles.dart';
+import 'package:diplom_new/util/underline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class VendorProfile extends StatefulWidget {
   const VendorProfile({Key? key});
@@ -8,159 +16,126 @@ class VendorProfile extends StatefulWidget {
 }
 
 class _VendorProfileState extends State<VendorProfile> {
-  TextEditingController _organizationController = TextEditingController();
-  String _originalOrganization =
-      "ООО Пивной дзен"; 
-  bool _isEditing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _organizationController.text = _originalOrganization;
-  }
-
-  void _toggleEdit() {
-    setState(() {
-      _isEditing = !_isEditing;
-      if (!_isEditing) {
-        _organizationController.text = _originalOrganization;
-      }
-    });
-  }
-
-  void _saveChanges() {
-    setState(() {
-      _originalOrganization = _organizationController.text;
-      _isEditing = false;
-    });
-    // Implement logic to save changes to backend
-  }
-
-  void _cancelChanges() {
-    setState(() {
-      _isEditing = false;
-      _organizationController.text = _originalOrganization;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).padding.bottom,
-              ),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthSuccessState) {
+          return Scaffold(
+            body: Column(
               children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const CircleAvatar(radius: 50),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-                    _isEditing
-                        ? IntrinsicWidth(
-                            child: TextFormField(
-                              minLines: null,
-                              maxLines: 1,
-                              controller: _organizationController,
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w400),
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom,
+                    ),
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 200,
+                            height: 200,
+                            child: ClipOval(
+                              child: Image.network(
+                                state.user.vendor!.image.toString(),
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                          )
-                        : Text(
-                            _originalOrganization,
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w400),
                           ),
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                  ],
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.02),
+                          Text(
+                            state.user.vendor!.nameOfOrganization,
+                            style: authTag,
+                          ),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.03),
+                        ],
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.edit),
+                            title: Text('Редактировать профиль',
+                                style: headerTextStyleBlack),
+                            trailing:
+                                const Icon(Icons.arrow_forward_ios_rounded),
+                            onTap: () {},
+                          ),
+                          GrayLine(context),
+                          ListTile(
+                            leading: const Icon(Icons.location_on),
+                            title: Text('Изменить адрес',
+                                style: headerTextStyleBlack),
+                            trailing:
+                                const Icon(Icons.arrow_forward_ios_rounded),
+                            onTap: () {},
+                          ),
+                          GrayLine(context),
+                          ListTile(
+                            leading: const Icon(Icons.lock),
+                            title: Text('Изменить пароль',
+                                style: headerTextStyleBlack),
+                            trailing:
+                                const Icon(Icons.arrow_forward_ios_rounded),
+                            onTap: () {},
+                          ),
+                          GrayLine(context),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.edit),
-                      title: const Text('Редактировать профиль',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w300)),
-                      trailing: _isEditing
-                          ? Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  onPressed: _saveChanges,
-                                  icon: const Icon(Icons.check_circle),
-                                ),
-                                IconButton(
-                                  onPressed: _cancelChanges,
-                                  icon: const Icon(Icons.cancel),
-                                ),
-                              ],
-                            )
-                          : const Icon(Icons.arrow_forward_ios_rounded),
-                      onTap: () {
-                        setState(() {
-                          _isEditing = !_isEditing;
-                          if (!_isEditing) {
-                            _organizationController.text =
-                                _originalOrganization;
-                          }
-                        });
-                      },
-                    ),
-                    const Divider(color: Colors.grey),
-                    ListTile(
-                      leading: const Icon(Icons.location_on),
-                      title: const Text('Изменить адрес',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w300)),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded),
-                      onTap: () {},
-                    ),
-                    const Divider(color: Colors.grey),
-                    ListTile(
-                      leading: const Icon(Icons.lock),
-                      title: const Text('Изменить пароль',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w300)),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded),
-                      onTap: () {},
-                    ),
-                    const Divider(color: Colors.grey),
-                  ],
+                Container(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    color: lightWhite,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: greyColor.withOpacity(0.2),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    leading: const Icon(Icons.exit_to_app),
+                    title:
+                        Text('Выйти из аккаунта', style: headerTextStyleBlack),
+                    onTap: () {
+                      context.read<AuthBloc>().add(AuthLogoutEvent());
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignInPage()),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.only(bottom: 10),
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 230, 228, 228),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3), // changes position of shadow
-                ),
-              ],
-            ),
-            child: ListTile(
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text('Выйти из аккаунта',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w300)),
-              onTap: () {},
-            ),
-          ),
-        ],
-      ),
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
     );
+  }
+
+  // ignore: non_constant_identifier_names
+  ConstrainedBox GrayLine(BuildContext context) {
+    return ConstrainedBox(
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.95),
+        child: const UnderLine());
   }
 }

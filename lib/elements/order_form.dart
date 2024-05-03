@@ -1,127 +1,9 @@
 import 'package:flutter/material.dart';
-
-class ProductSelectionWidget extends StatefulWidget {
-  final List<String> products;
-  final Function(String, int) onProductAdded;
-
-  const ProductSelectionWidget({
-    super.key,
-    required this.products,
-    required this.onProductAdded,
-  });
-
-  @override
-  _ProductSelectionWidgetState createState() => _ProductSelectionWidgetState();
-}
-
-class _ProductSelectionWidgetState extends State<ProductSelectionWidget> {
-  String? _selectedProduct;
-  int _quantity = 1;
-  late TextEditingController _quantityController;
-
-  @override
-  void initState() {
-    super.initState();
-    _quantityController = TextEditingController(text: '$_quantity');
-    _quantityController.addListener(_onQuantityChanged);
-  }
-
-  @override
-  void dispose() {
-    _quantityController.removeListener(_onQuantityChanged);
-    _quantityController.dispose();
-    super.dispose();
-  }
-
-  void _onQuantityChanged() {
-    setState(() {
-      _quantity = int.tryParse(_quantityController.text) ?? 1;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DropdownButton<String>(
-            value: _selectedProduct,
-            onChanged: (String? value) {
-              setState(() {
-                _selectedProduct = value;
-              });
-            },
-            items: widget.products.map((String product) {
-              return DropdownMenuItem<String>(
-                value: product,
-                child: Text(product),
-              );
-            }).toList(),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    _quantity = (_quantity > 1) ? _quantity - 1 : 1;
-                    _quantityController.text = '$_quantity';
-                  });
-                },
-                icon: const Icon(Icons.remove),
-              ),
-              IntrinsicWidth(
-                child: TextFormField(
-                  minLines: null,
-                  maxLines: 1,
-                  controller: _quantityController,
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    _quantity++;
-                    _quantityController.text = '$_quantity';
-                  });
-                },
-                icon: const Icon(Icons.add),
-              ),
-            ],
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color.fromARGB(255, 30, 30, 30),
-            ),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-              ),
-              onPressed: () {
-                if (_selectedProduct != null) {
-                  widget.onProductAdded(_selectedProduct!, _quantity);
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text(
-                'Добавить',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
+import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/util/color.dart';
+import 'package:diplom_new/util/text_styles.dart';
 
 class OrderFormWidget extends StatefulWidget {
   const OrderFormWidget({super.key});
@@ -131,170 +13,178 @@ class OrderFormWidget extends StatefulWidget {
 }
 
 class _OrderFormWidgetState extends State<OrderFormWidget> {
-  final List<String> _products = ['Product 1', 'Product 2', 'Product 3'];
-  final Map<String, int> _selectedProducts = {};
+  final Map<String, String> _productTypes = {
+    '1': 'Скоропортящийся',
+    '2': 'Насыпной',
+    '3': 'Генеральный',
+    '4': 'Негабаритный',
+    '5': 'Газообразный',
+    '6': 'Пылевидный',
+    '7': 'Наливной',
+    '8': 'Опасный',
+  };
+  String? _selectedProductType;
 
-  String? _address;
-  String? _comments;
+  final Map<String, String> _paymentMethods = {
+    '1': 'Терминал',
+    '2': 'Наличные',
+  };
+  String? _selectedPaymentMethod;
 
-  void _showProductSelectionDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Выбрать товар',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color.fromARGB(255, 30, 30, 30),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          content: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: ProductSelectionWidget(
-              products: _products,
-              onProductAdded: (String product, int quantity) {
-                setState(() {
-                  if (_selectedProducts.containsKey(product)) {
-                    _selectedProducts[product] =
-                        (_selectedProducts[product] ?? 0) + quantity;
-                  } else {
-                    _selectedProducts[product] = quantity;
-                  }
-                });
-              },
-            ),
-          ),
-        );
-      },
-    );
-  }
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _commentsController = TextEditingController();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state is AuthSuccessState) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Expanded(child: buildOrderFormFields(context)),
+                  buildPublishOrderButton(state.user.vendor!.id.toString()),
+                ],
+              ),
+            );
+          } else {
+            return const Center(
+              child: Text('что-то пошло не так'),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  SingleChildScrollView buildOrderFormFields(BuildContext context) {
+    return SingleChildScrollView(
+      child: Form(
+        key: _formKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: OrderFormFields(context),
-            ),
-            PublishOrderButton(),
+            buildTextFormField(_addressController, 'Укажите адрес', true,
+                r'^(г\.?\s?[А-Яа-я]+,\s*)?(ул\.|пр-т|пер\.)\s?[А-Яа-я]+[А-Яа-я\d\s\-]*\s*,\s*\d{1,3}(?:\\\d{1})?$'),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            buildTextFormField(_phoneNumberController, 'Номер телефона', true,
+                r'^\+?375\(?([0-9]{2})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{2})[-. ]?([0-9]{2})$'),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            buildDropdownButtonField(
+                'Выберите тип товара:', _productTypes, _selectedProductType,
+                (String? value) {
+              setState(() {
+                _selectedProductType = value;
+              });
+            }),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            buildDropdownButtonField('Выберите способ оплаты:', _paymentMethods,
+                _selectedPaymentMethod, (String? value) {
+              setState(() {
+                _selectedPaymentMethod = value;
+              });
+            }),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
+            buildTextFormField(_commentsController, 'Комментарий', false),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
           ],
         ),
       ),
     );
   }
 
-  SingleChildScrollView OrderFormFields(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          TextField(
-            onChanged: (value) {
-              setState(() {
-                _address = value;
-              });
-            },
-            decoration: const InputDecoration(
-              labelText: 'Укажите адрес',
-            ),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: const Color.fromARGB(255, 30, 30, 30),
-            ),
-            child: ElevatedButton(
-              onPressed: _showProductSelectionDialog,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-              ),
-              child: const Text(
-                'Выбрать товар',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-          const Text(
-            'Выбранные товары:',
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-              color: Color.fromARGB(255, 30, 30, 30),
-            ),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: _selectedProducts.length,
-            itemBuilder: (BuildContext context, int index) {
-              final productName = _selectedProducts.keys.elementAt(index);
-              final quantity = _selectedProducts[productName];
-              return ListTile(
-                title: Text('$productName x $quantity'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    setState(() {
-                      _selectedProducts.remove(productName);
-                    });
-                  },
-                ),
+  Widget buildTextFormField(TextEditingController controller, String labelText,
+      [bool validate = true, String? regexPattern]) {
+    return TextFormField(
+      controller: controller,
+      validator: validate
+          ? (value) {
+              if (value == null || value.isEmpty) {
+                return 'Пожалуйста, укажите $labelText';
+              } else if (regexPattern != null &&
+                  !RegExp(regexPattern).hasMatch(value)) {
+                return 'Пожалуйста, введите корректный $labelText';
+              }
+              return null;
+            }
+          : null,
+      decoration: InputDecoration(
+        labelText: labelText,
+      ),
+    );
+  }
+
+  void showSnackBarMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: headerTextStyleWhite,
+        ),
+      ),
+    );
+  }
+
+  Widget buildDropdownButtonField(String labelText, Map<String, String> items,
+      String? selectedItem, Function(String?) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(labelText, style: headerTextStyleBlack),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+          DropdownButton<String>(
+            value: selectedItem,
+            onChanged: onChanged,
+            style: headerTextStyleBlack,
+            items: items.keys.map((String itemKey) {
+              return DropdownMenuItem<String>(
+                value: itemKey,
+                child: Text(items[itemKey]!),
               );
-            },
+            }).toList(),
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-          TextFormField(
-            onChanged: (value) {
-              setState(() {
-                _comments = value;
-              });
-            },
-            decoration: const InputDecoration(
-              labelText: 'Комментарий',
-            ),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02),
         ],
       ),
     );
   }
 
-  Container PublishOrderButton() {
+  Widget buildPublishOrderButton(String vendor) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
+      height: MediaQuery.of(context).size.height * 0.05,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 30, 30, 30),
+        color: blackColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: ElevatedButton(
         onPressed: () {
-          print('Selected Products: $_selectedProducts');
-          print('Address: $_address');
-          print('Comments: $_comments');
+          if (_formKey.currentState!.validate() &&
+              _selectedProductType != null &&
+              _selectedPaymentMethod != null) {
+            context.read<GetOrderInfoBloc>().add(CreateOrderEvent(
+                  vendor,
+                  _addressController.text,
+                  _selectedPaymentMethod!,
+                  _phoneNumberController.text,
+                  _selectedProductType!,
+                  _commentsController.text,
+                ));
+          } else {
+            showSnackBarMessage(
+                context, 'Пожалуйста, заполните все обязательные поля');
+          }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+          backgroundColor: blackColor,
         ),
-        child: const Text(
-          'Опубликовать',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        child: Text('Опубликовать', style: mainTextStyleWhite),
       ),
     );
   }
