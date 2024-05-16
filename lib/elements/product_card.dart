@@ -9,7 +9,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductCardModel extends StatelessWidget {
   final int index;
+  final bool isActive;
   const ProductCardModel({
+    this.isActive = false,
     required this.index,
     super.key,
   });
@@ -18,6 +20,7 @@ class ProductCardModel extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
       builder: (context, state) {
+        //log(isActive as String);
         if (state is GetOrderInfoLoaded && state.order.isNotEmpty) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -45,7 +48,7 @@ class ProductCardModel extends StatelessWidget {
                 height: 200,
                 width: MediaQuery.of(context).size.width * 0.95,
                 decoration: BoxDecoration(
-                  color: whiteColor,
+                  color: isActive ? greyColor : whiteColor,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(

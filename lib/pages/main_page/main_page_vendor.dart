@@ -4,6 +4,7 @@ import 'package:diplom_new/elements/order_form.dart';
 import 'package:diplom_new/elements/product_card.dart';
 import 'package:diplom_new/elements/vendor_profile.dart';
 import 'package:diplom_new/pages/history_page/history_page_vendor.dart';
+import 'package:diplom_new/util/color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -37,7 +38,7 @@ class _MainPageVendorState extends State<MainPageVendor> {
         if (state is AuthSuccessState) {
           return Scaffold(
             appBar: AppBar(
-                backgroundColor: const Color.fromARGB(255, 35, 33, 33),
+                backgroundColor: blackColor,
                 iconTheme: const IconThemeData(
                   size: 25,
                 )),
@@ -45,8 +46,8 @@ class _MainPageVendorState extends State<MainPageVendor> {
               child: _widgetOptions.elementAt(_selectedIndex),
             ),
             bottomNavigationBar: BottomNavigationBar(
-              selectedItemColor: const Color.fromARGB(255, 35, 33, 33),
-              unselectedItemColor: const Color.fromARGB(255, 35, 33, 33),
+              selectedItemColor: blackColor,
+              unselectedItemColor: blackColor,
               selectedFontSize: 14,
               unselectedFontSize: 14,
               iconSize: 25,
@@ -87,16 +88,13 @@ class GeneralPageVendor extends StatefulWidget {
 }
 
 class _GeneralPageVendorState extends State<GeneralPageVendor> {
-  late AuthBloc _authBloc;
+  late final GetOrderInfoBloc _getOrderInfoBloc;
   @override
   void initState() {
     super.initState();
-    _authBloc = BlocProvider.of<AuthBloc>(context);
-    final state = _authBloc.state;
-    if (state is AuthSuccessState && state.user.vendor != null) {
-      BlocProvider.of<GetOrderInfoBloc>(context)
-          .add(GetVendorOrderEvent(vendorId: state.user.vendor!.id));
-    }
+    //context.read<GetOrderInfoBloc>().add(GetOrdersEvent());
+    _getOrderInfoBloc = BlocProvider.of<GetOrderInfoBloc>(context);
+    _getOrderInfoBloc.add(GetOrdersEvent());
   }
 
   @override
@@ -112,9 +110,13 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                   itemCount: state.order.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
-                      onLongPress: () {},
+                      onLongPress: () {
+                        _getOrderInfoBloc
+                            .add(DeleteOrderEvent(orderIndex: index));
+                      },
                       child: ProductCardModel(
                         index: index,
+                        isActive: state.order[index].isActive,
                       ),
                     );
                   },

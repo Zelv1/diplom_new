@@ -13,8 +13,8 @@ TextStyle headerTextStyleWhite = const TextStyle(
 TextStyle headerTextStyleBlack = const TextStyle(
     fontSize: 16, fontWeight: FontWeight.w500, color: blackColor);
 
-TextStyle mainTextStyleBlack = const TextStyle(
-    fontSize: 13, fontWeight: FontWeight.w300, color: blackColor);
+TextStyle mainTextStyleBlack =
+    const TextStyle(fontSize: 13, fontWeight: FontWeight.w300);
 
 TextStyle mainTextStyleWhite = const TextStyle(
     color: whiteColor, fontSize: 13, fontWeight: FontWeight.w300);

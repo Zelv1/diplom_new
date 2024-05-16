@@ -9,17 +9,11 @@ class CreateOrderRepository {
   final String payment;
   final String goodType;
   String review;
-  CreateOrderRepository(
-    this.token,
-    this.vendor,
-    this.address,
-    this.payment,
-    this.phoneNumber,
-    this.goodType,
-    this.review,
-  );
+  CreateOrderRepository(this.vendor, this.address, this.payment,
+      this.phoneNumber, this.goodType, this.review,
+      {required this.token});
 
-  Future<void> createOrder() async {
+  Future<void> createOrder(String? token) async {
     try {
       await http.post(
         Uri.parse('$BASE_URL/order/'),

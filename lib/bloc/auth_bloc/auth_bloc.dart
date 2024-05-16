@@ -1,3 +1,6 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -11,13 +14,23 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitialState()) {
+    log('AUTH BLOC');
+    AuthMiddleware.authData.listen((event) {
+      log('===== event=$event =====');
+    });
+    AuthMiddleware.user.listen((event) {
+      log('===== event=$event =====');
+    });
+
     on<AuthCheckCacheEvent>((event, emit) async {
       emit(AuthLoadingState());
+      log('AUTH CHECK CACHE');
       try {
         final token = await authRepositoryGetLocalToken();
         if (token == null) {
           emit(AuthWaitCredentialsState());
         } else {
+          AuthMiddleware.saveAuthData(token);
           add(AuthFetchEvent(token: token));
         }
       } catch (e) {
@@ -28,9 +41,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoginEvent>((event, emit) async {
       emit(AuthLoadingState());
       try {
-        String token =
+        String _token =
             await authRepositoryAuthorization(event.username, event.password);
-        add(AuthFetchEvent(token: token));
+        AuthMiddleware.saveAuthData(_token);
+        add(AuthFetchEvent(token: _token));
       } catch (e) {
         log(e.toString());
         emit(AuthWaitCredentialsState());
@@ -42,6 +56,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final repository = GetUserDataRepository(event.token);
         final user = await repository.getUserData();
+        AuthMiddleware.saveUser(user);
         emit(AuthSuccessState(user: user));
       } catch (e) {
         log(e.toString());
@@ -61,29 +76,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     );
-
-    // on<AuthSignInEvent>((event, emit) async {
-    //   emit(AuthLoadingState());
-    //   AuthRepository repository =
-    //       AuthRepository(username: event.username, password: event.password);
-    //   try {
-    //     String token = await repository.authorization();
-    //     emit(AuthLoadedState(token: token));
-    //   } catch (e) {
-    //     log(e.toString());
-    //     emit(AuthErrorState());
-    //   }
-    // });
-
-    // on<AuthIsLogedEvent>((event, emit) async {
-    //   AuthRepository repository = AuthRepository();
-    //   try {
-    //     String token = await repository.getLocalToken();
-    //     emit(AuthLoadedState(token: token));
-    //   } catch (e) {
-    //     log(e.toString());
-    //     emit(AuthErrorState());
-    //   }
-    // });
   }
+}
+
+class AuthMiddleware {
+  static final StreamController<String?> _authData =
+      StreamController<String?>.broadcast();
+  static final StreamController<UserModel?> _user =
+      StreamController<UserModel?>.broadcast();
+
+  static void saveAuthData(String? authData) {
+    log('работает saveData');
+    _authData.add(authData);
+    log('$authData');
+  }
+
+  static void saveUser(UserModel? user) {
+    log('работает saveUser');
+    _user.add(user);
+    log('$user');
+  }
+
+  static Stream get authData => _authData.stream;
+  static Stream get user => _user.stream;
 }

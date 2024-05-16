@@ -1,7 +1,8 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:diplom_new/bloc/create_order_bloc/create_order_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
-import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
 
@@ -40,15 +41,15 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<AuthBloc, AuthState>(
+      body: BlocBuilder<CreateOrderBloc, CreateOrderBlocState>(
         builder: (context, state) {
-          if (state is AuthSuccessState) {
+          if (state is CreateOrderBlocInitial) {
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
                   Expanded(child: buildOrderFormFields(context)),
-                  buildPublishOrderButton(state.user.vendor!.id.toString()),
+                  buildPublishOrderButton(),
                 ],
               ),
             );
@@ -155,7 +156,7 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
     );
   }
 
-  Widget buildPublishOrderButton(String vendor) {
+  Widget buildPublishOrderButton() {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
       height: MediaQuery.of(context).size.height * 0.05,
@@ -168,8 +169,7 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
           if (_formKey.currentState!.validate() &&
               _selectedProductType != null &&
               _selectedPaymentMethod != null) {
-            context.read<GetOrderInfoBloc>().add(CreateOrderEvent(
-                  vendor,
+            context.read<CreateOrderBloc>().add(CreateOrderEvent(
                   _addressController.text,
                   _selectedPaymentMethod!,
                   _phoneNumberController.text,

@@ -1,5 +1,9 @@
 // ignore_for_file: non_constant_identifier_names
+import 'dart:developer';
+
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
+import 'package:diplom_new/bloc/create_order_bloc/create_order_bloc.dart';
+import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 //import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/pages/main_page/main_page_courier.dart';
 import 'package:diplom_new/pages/main_page/main_page_vendor.dart';
@@ -19,6 +23,15 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   TextEditingController controllerUserName = TextEditingController();
   TextEditingController controllerPassword = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    log('AUTH CHECK CACHE IN PAGE');
+    context.read<GetOrderInfoBloc>();
+    context.read<CreateOrderBloc>();
+    context.read<AuthBloc>().add(AuthCheckCacheEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

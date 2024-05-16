@@ -2,6 +2,7 @@ import '../courier_model/courier_model.dart';
 import '../vendor_model/vendor_model.dart';
 
 class OrderModel {
+  final bool isActive;
   final int id;
   CourierModel? iDCourier;
   VendorModel? iDVendor;
@@ -15,7 +16,8 @@ class OrderModel {
   String? review;
 
   OrderModel(
-      {required this.id,
+      {this.isActive = false,
+      required this.id,
       this.iDCourier,
       this.iDVendor,
       required this.date,
@@ -35,14 +37,14 @@ class OrderModel {
         payment = json['payment'],
         state = json['state'],
         phoneNumber = json['phoneNumber'],
-        goodType = json['goodType'] {
+        goodType = json['goodType'],
+        isActive = false {
     iDCourier = json['IDCourier'] != null
         ? CourierModel.fromJson(json['IDCourier'])
         : null;
     iDVendor = json['IDVendor'] != null
         ? VendorModel.fromJson(json['IDVendor'])
         : null;
-
     review = json['review'];
   }
 
@@ -64,5 +66,34 @@ class OrderModel {
     data['goodType'] = goodType;
     data['review'] = review;
     return data;
+  }
+
+  OrderModel copyWith(
+      {bool? isActive,
+      int? id,
+      CourierModel? iDCourier,
+      VendorModel? iDVendor,
+      String? date,
+      String? address,
+      DateTime? deliverTo,
+      String? payment,
+      String? state,
+      String? phoneNumber,
+      String? goodType,
+      String? review}) {
+    return OrderModel(
+      address: address ?? this.address,
+      id: id ?? this.id,
+      iDCourier: iDCourier ?? this.iDCourier,
+      iDVendor: iDVendor ?? this.iDVendor,
+      date: date ?? this.date,
+      deliverTo: deliverTo ?? this.deliverTo,
+      payment: payment ?? this.payment,
+      state: state ?? this.state,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      goodType: goodType ?? this.goodType,
+      review: review ?? this.review,
+      isActive: isActive ?? this.isActive,
+    );
   }
 }

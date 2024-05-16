@@ -24,7 +24,7 @@ class _MainPageCourierState extends State<MainPageCourier> {
   @override
   void initState() {
     super.initState();
-    context.read<GetOrderInfoBloc>().add(GetCourierOrderEvent());
+    context.read<GetOrderInfoBloc>().add(GetOrdersEvent());
   }
 
   @override
