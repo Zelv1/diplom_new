@@ -11,7 +11,9 @@ class GetHistoryEvent extends GetOrderInfoEvent {
   GetHistoryEvent();
 }
 
-class DeleteOrderEvent extends GetOrderInfoEvent {
+class DeleteSelectedOrdersEvent extends GetOrderInfoEvent {}
+
+class SelectOrderEvent extends GetOrderInfoEvent {
   final int orderIndex;
-  DeleteOrderEvent({required this.orderIndex});
+  SelectOrderEvent({required this.orderIndex});
 }

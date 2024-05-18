@@ -14,9 +14,11 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class OrderDescription extends StatelessWidget {
   final int index;
+  final bool isActive;
   const OrderDescription({
     super.key,
     required this.index,
+    required this.isActive,
   });
 
   @override
@@ -133,11 +135,11 @@ class OrderDescription extends StatelessWidget {
                             height: MediaQuery.of(context).size.height * 0.3,
                             width: MediaQuery.of(context).size.width * 0.9,
                             decoration: BoxDecoration(
-                              color: blackColor,
+                              color: lightBlack,
                               borderRadius: BorderRadius.circular(10.0),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
+                                  color: blackColor.withOpacity(0.2),
                                   spreadRadius: 5,
                                   blurRadius: 7,
                                   offset: const Offset(0, 3),
@@ -172,10 +174,6 @@ class OrderDescription extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.only(top: 20),
-                        //   child: Text()
-                        // ),
                       ],
                     ),
                   ),

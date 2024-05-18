@@ -14,6 +14,7 @@ class OrderModel {
   final String phoneNumber;
   final String goodType;
   String? review;
+  String? qrCode;
 
   OrderModel(
       {this.isActive = false,
@@ -27,7 +28,8 @@ class OrderModel {
       required this.state,
       required this.phoneNumber,
       required this.goodType,
-      this.review});
+      this.review,
+      this.qrCode});
 
   OrderModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -46,6 +48,7 @@ class OrderModel {
         ? VendorModel.fromJson(json['IDVendor'])
         : null;
     review = json['review'];
+    qrCode = json['qr_code'];
   }
 
   Map<String, dynamic> toJson() {
@@ -65,6 +68,7 @@ class OrderModel {
     data['phoneNumber'] = phoneNumber;
     data['goodType'] = goodType;
     data['review'] = review;
+    data['qr_code'] = qrCode;
     return data;
   }
 
@@ -80,7 +84,8 @@ class OrderModel {
       String? state,
       String? phoneNumber,
       String? goodType,
-      String? review}) {
+      String? review,
+      String? qrCode}) {
     return OrderModel(
       address: address ?? this.address,
       id: id ?? this.id,
@@ -94,6 +99,7 @@ class OrderModel {
       goodType: goodType ?? this.goodType,
       review: review ?? this.review,
       isActive: isActive ?? this.isActive,
+      qrCode: qrCode ?? this.qrCode,
     );
   }
 }

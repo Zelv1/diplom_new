@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
+import 'package:diplom_new/features/repository/delete_order_repository/delete_order_repository.dart';
 import 'package:diplom_new/features/repository/get_order_data_courier_history_repository/get_order_data_courier_history_repository.dart';
 import 'package:diplom_new/features/repository/get_order_data_vendor_history_repository/get_order_data_vendor_history_repository.dart';
 import 'package:diplom_new/features/repository/get_order_data_vendor_repository/get_order_data_vendor_repository.dart';
@@ -19,6 +20,7 @@ class GetOrderInfoBloc extends Bloc<GetOrderInfoEvent, GetOrderInfoState> {
   String? token;
   String? vendorId;
   String? courierId;
+  final selectedIndexes = <int>{};
 
   GetOrderInfoBloc() : super(GetOrderInfoInitial()) {
     log('GET ORDER BLOC');
@@ -80,14 +82,42 @@ class GetOrderInfoBloc extends Bloc<GetOrderInfoEvent, GetOrderInfoState> {
       }
     });
 
-    on<DeleteOrderEvent>(
+    on<SelectOrderEvent>(
       (event, emit) async {
         if (state is GetOrderInfoLoaded) {
           final index = event.orderIndex;
           var orders = (state as GetOrderInfoLoaded).order;
-          final selectedOrder = orders[index].copyWith(isActive: true);
-          orders[index] = selectedOrder;
+
+          if (selectedIndexes.contains(index)) {
+            selectedIndexes.remove(index);
+            final selectedOrder = orders[index].copyWith(isActive: false);
+            orders[index] = selectedOrder;
+          } else {
+            selectedIndexes.add(index);
+            final selectedOrder = orders[index].copyWith(isActive: true);
+            orders[index] = selectedOrder;
+          }
+
           emit((state as GetOrderInfoLoaded).copyWith(orders));
+        }
+      },
+    );
+
+    on<DeleteSelectedOrdersEvent>(
+      (event, emit) async {
+        if (state is GetOrderInfoLoaded) {
+          List<String> orderToDelete = [];
+          for (var index in selectedIndexes) {
+            orderToDelete.add(
+                ((state as GetOrderInfoLoaded).order[index].id).toString());
+          }
+          for (var orderId in orderToDelete) {
+            final repository = DeleteOrderRepository(token!, orderId);
+            await repository.deleteOrder();
+          }
+          selectedIndexes.clear();
+          add(GetOrdersEvent());
+          log('SUCCESS DELETE');
         }
       },
     );

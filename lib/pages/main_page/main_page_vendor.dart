@@ -1,8 +1,12 @@
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+
 import 'package:diplom_new/elements/order_form.dart';
 import 'package:diplom_new/elements/product_card.dart';
+import 'package:diplom_new/elements/qr_code_watch.dart';
 import 'package:diplom_new/elements/vendor_profile.dart';
+import 'package:diplom_new/features/api_url.dart';
+import 'package:diplom_new/features/repository/print_qr_code/print_qr_code.dart';
 import 'package:diplom_new/pages/history_page/history_page_vendor.dart';
 import 'package:diplom_new/util/color.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +93,7 @@ class GeneralPageVendor extends StatefulWidget {
 
 class _GeneralPageVendorState extends State<GeneralPageVendor> {
   late final GetOrderInfoBloc _getOrderInfoBloc;
+  List<int?> selectedIndexes = [];
   @override
   void initState() {
     super.initState();
@@ -103,6 +108,7 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
       body: BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
           builder: (context, state) {
         if (state is GetOrderInfoLoaded) {
+          bool showButton = state.order.any((order) => order.isActive);
           return Column(
             children: [
               Expanded(
@@ -111,8 +117,13 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onLongPress: () {
+                        if (selectedIndexes.contains(index)) {
+                          selectedIndexes.remove(index);
+                        } else {
+                          selectedIndexes.add(index);
+                        }
                         _getOrderInfoBloc
-                            .add(DeleteOrderEvent(orderIndex: index));
+                            .add(SelectOrderEvent(orderIndex: index));
                       },
                       child: ProductCardModel(
                         index: index,
@@ -122,6 +133,44 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                   },
                 ),
               ),
+              if (showButton && selectedIndexes.length == 1)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        _getOrderInfoBloc.add(DeleteSelectedOrdersEvent());
+                        selectedIndexes.clear();
+                      },
+                      icon: const Icon(Icons.delete, size: 50),
+                    ),
+                    IconButton(
+                        onPressed: () async {
+                          final imageBytes = await getImageBytes(BASE_URL +
+                              state.order[selectedIndexes.first!].qrCode
+                                  .toString());
+                          await printDoc(imageBytes);
+                        },
+                        icon: const Icon(Icons.print, size: 50)),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => QRCodeWatcher(
+                                      index: selectedIndexes.first)));
+                        },
+                        icon: const Icon(Icons.info_outlined, size: 50)),
+                  ],
+                ),
+              if (showButton && selectedIndexes.length > 1)
+                IconButton(
+                  onPressed: () {
+                    _getOrderInfoBloc.add(DeleteSelectedOrdersEvent());
+                    selectedIndexes.clear();
+                  },
+                  icon: const Icon(Icons.delete, size: 50),
+                ),
             ],
           );
         } else {

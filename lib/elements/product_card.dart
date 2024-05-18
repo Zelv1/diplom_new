@@ -20,7 +20,6 @@ class ProductCardModel extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
       builder: (context, state) {
-        //log(isActive as String);
         if (state is GetOrderInfoLoaded && state.order.isNotEmpty) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -30,7 +29,10 @@ class ProductCardModel extends StatelessWidget {
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                        OrderDescription(index: index),
+                        OrderDescription(
+                      index: index,
+                      isActive: state.order[index].isActive,
+                    ),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
                       return SlideTransition(

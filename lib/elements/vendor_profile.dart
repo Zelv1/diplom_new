@@ -1,5 +1,7 @@
 // ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api
 
+import 'dart:developer';
+
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/pages/sign_in_page/sign_in_page.dart';
 import 'package:diplom_new/util/color.dart';
@@ -21,6 +23,7 @@ class _VendorProfileState extends State<VendorProfile> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthSuccessState) {
+          log(state.user.vendor!.image.toString());
           return Scaffold(
             body: Column(
               children: [

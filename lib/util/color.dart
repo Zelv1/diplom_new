@@ -6,4 +6,5 @@ const Color greyColor = Colors.grey;
 const Color semiWhiteColor = Color.fromARGB(255, 204, 183, 183);
 const Color trueBlackColor = Colors.black;
 const Color blackColor = Color.fromARGB(255, 35, 35, 35);
+const Color lightBlack = Color.fromARGB(255, 66, 64, 64);
 const Color colorForUnderline = Color.fromARGB(255, 163, 159, 159);

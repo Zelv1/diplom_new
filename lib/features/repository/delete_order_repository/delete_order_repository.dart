@@ -14,7 +14,7 @@ class DeleteOrderRepository {
         headers: {'Authorization': 'Token $token'},
       );
 
-      if (response.statusCode == 301) {
+      if (response.statusCode == 301 || response.statusCode == 204) {
         return 'Удаление выполнено успешно';
       } else {
         throw response.statusCode.toString();
