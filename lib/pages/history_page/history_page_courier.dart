@@ -48,7 +48,7 @@ class _HistoryPageState extends State<HistoryPageCourier> {
                   itemCount: state.order.length,
                   itemBuilder: (context, index) {
                     return ProductCardModel(
-                      index: index,
+                      order: state.order[state.order.length - 1 - index],
                     );
                   });
             }

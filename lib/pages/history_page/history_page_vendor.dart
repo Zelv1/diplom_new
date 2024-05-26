@@ -26,8 +26,9 @@ class _HistoryPageState extends State<HistoryPageVendor> {
             itemCount: state.order.length,
             itemBuilder: (context, index) {
               return GestureDetector(
+                //TODO: фиксануть переключение
                 child: ProductCardModel(
-                  index: index,
+                  order: state.order[state.order.length - 1 - index],
                 ),
               );
             });

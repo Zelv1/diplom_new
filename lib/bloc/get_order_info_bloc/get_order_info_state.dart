@@ -9,10 +9,15 @@ class GetOrderInfoLoading extends GetOrderInfoState {}
 
 class GetOrderInfoLoaded extends GetOrderInfoState {
   final List<OrderModel> order;
-  GetOrderInfoLoaded({required this.order});
+  final OrderModel? selectedOrder;
 
-  GetOrderInfoLoaded copyWith(List<OrderModel>? order) {
-    return GetOrderInfoLoaded(order: order ?? this.order);
+  GetOrderInfoLoaded({required this.order, this.selectedOrder});
+
+  GetOrderInfoLoaded copyWith(
+      List<OrderModel>? order, OrderModel? selectedOrder) {
+    return GetOrderInfoLoaded(
+        order: order ?? this.order,
+        selectedOrder: selectedOrder ?? this.selectedOrder);
   }
 }
 

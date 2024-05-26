@@ -45,12 +45,16 @@ class GetOrderInfoBloc extends Bloc<GetOrderInfoEvent, GetOrderInfoState> {
           final repository =
               GetOrderDataVendorRepository(token!, int.parse(vendorId!));
           final order = await repository.getOrderDataVendor();
-          emit(GetOrderInfoLoaded(order: order));
+          emit(GetOrderInfoLoaded(
+            order: order,
+          ));
         } else if (vendorId == null) {
           log("Должны отображаться заказы курьера");
           final repository = GetOrderDataCourierRepository(token!);
           final order = await repository.getOrderDataCourier();
-          emit(GetOrderInfoLoaded(order: order));
+          emit(GetOrderInfoLoaded(
+            order: order,
+          ));
         } else {
           emit(GetOrderInfoFailed());
         }
@@ -86,19 +90,19 @@ class GetOrderInfoBloc extends Bloc<GetOrderInfoEvent, GetOrderInfoState> {
       (event, emit) async {
         if (state is GetOrderInfoLoaded) {
           final index = event.orderIndex;
-          var orders = (state as GetOrderInfoLoaded).order;
+          final List<OrderModel> orders = (state as GetOrderInfoLoaded).order;
 
           if (selectedIndexes.contains(index)) {
             selectedIndexes.remove(index);
             final selectedOrder = orders[index].copyWith(isActive: false);
             orders[index] = selectedOrder;
+            emit((state as GetOrderInfoLoaded).copyWith(orders, null));
           } else {
             selectedIndexes.add(index);
             final selectedOrder = orders[index].copyWith(isActive: true);
             orders[index] = selectedOrder;
+            emit((state as GetOrderInfoLoaded).copyWith(orders, selectedOrder));
           }
-
-          emit((state as GetOrderInfoLoaded).copyWith(orders));
         }
       },
     );

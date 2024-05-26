@@ -1,13 +1,14 @@
 import 'package:action_slider/action_slider.dart';
+import 'package:diplom_new/bloc/deliver_order_bloc/deliver_order_bloc.dart';
 import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SliderOrder extends StatelessWidget {
-  final VoidCallback onBack;
-
+  final String orderId;
   const SliderOrder({
-    required this.onBack,
+    required this.orderId,
     super.key,
   });
 
@@ -24,12 +25,10 @@ class SliderOrder extends StatelessWidget {
         color: whiteColor,
       ),
       successIcon: const Icon(Icons.check, color: whiteColor),
-      action: (controller) async {
+      action: (controller) {
         controller.loading();
-        await Future.delayed(const Duration(seconds: 1));
+        context.read<DeliverOrderBloc>().add(FinishOrderEvent(orderId));
         controller.success();
-        await Future.delayed(const Duration(seconds: 1));
-        onBack();
       },
       child: Text('Заказ выдан', style: headerTextStyleBlack),
     );

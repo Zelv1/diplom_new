@@ -5,7 +5,7 @@ import 'package:diplom_new/features/api_url.dart';
 class ChangeStatusOrderFinish {
   final String orderId;
   final String token;
-  ChangeStatusOrderFinish(this.orderId, this.token);
+  ChangeStatusOrderFinish(this.token, this.orderId);
 
   Future<String> changeStatusOrderFinish() async {
     try {

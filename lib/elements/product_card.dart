@@ -1,25 +1,33 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/elements/order_description.dart';
+import 'package:diplom_new/features/models/order_model/order_model.dart';
 import 'package:diplom_new/util/checker.dart';
 import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:diplom_new/util/underline.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductCardModel extends StatelessWidget {
-  final int index;
+  final OrderModel order;
   final bool isActive;
+
   const ProductCardModel({
-    this.isActive = false,
-    required this.index,
     super.key,
+    required this.order,
+    this.isActive = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
       builder: (context, state) {
+        log('в продуктовой ${isActive.toString()}');
+
         if (state is GetOrderInfoLoaded && state.order.isNotEmpty) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
@@ -30,8 +38,9 @@ class ProductCardModel extends StatelessWidget {
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
                         OrderDescription(
-                      index: index,
-                      isActive: state.order[index].isActive,
+                      order: order,
+                      isActive: order.isActive,
+                      isDeliver: false,
                     ),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
@@ -79,11 +88,11 @@ class ProductCardModel extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${state.order[index].id}',
+                              '${order.id}',
                               style: mainTextStyleWhite,
                             ),
                             Text(
-                              'Доставить до ${formatTime(state.order[index].deliverTo.toString())}',
+                              'Доставить до ${formatTime(order.deliverTo.toString())}',
                               style: mainTextStyleWhite,
                             )
                           ],
@@ -107,7 +116,7 @@ class ProductCardModel extends StatelessWidget {
                                   width: 7,
                                 ),
                                 Text(
-                                  state.order[index].address,
+                                  order.address,
                                   style: headerTextStyleBlack,
                                 )
                               ],
@@ -122,17 +131,17 @@ class ProductCardModel extends StatelessWidget {
                                   child: Text(''),
                                 ),
                                 Icon(
-                                  state.order[index].state == '1'
+                                  order.state == '1'
                                       ? Icons.watch_later_outlined
-                                      : state.order[index].state == '2'
+                                      : order.state == '2'
                                           ? Icons.drive_eta_outlined
-                                          : state.order[index].state == '3'
+                                          : order.state == '3'
                                               ? Icons.done
                                               : Icons.assist_walker,
                                   size: 24,
                                 ),
                                 const SizedBox(width: 7),
-                                Text(getOrderState(state.order[index].state),
+                                Text(getOrderState(order.state),
                                     style: mainTextStyleBlack)
                               ],
                             ),
@@ -146,13 +155,13 @@ class ProductCardModel extends StatelessWidget {
                           const EdgeInsets.only(top: 5, bottom: 10, left: 13),
                       child: Row(
                         children: [
-                          Text(getPaymentMethod(state.order[index].payment),
+                          Text(getPaymentMethod(order.payment),
                               style: mainTextStyleBlack),
                           const SizedBox(
                             width: 7,
                           ),
                           Icon(
-                            getPaymentIcon(state.order[index].payment),
+                            getPaymentIcon(order.payment),
                             size: 24,
                           ),
                         ],

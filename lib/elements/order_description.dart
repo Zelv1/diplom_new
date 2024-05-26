@@ -2,6 +2,8 @@
 
 import 'dart:developer';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/elements/slider.dart';
+import 'package:diplom_new/features/models/order_model/order_model.dart';
 import 'package:diplom_new/util/checker.dart';
 import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
@@ -13,30 +15,33 @@ import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class OrderDescription extends StatelessWidget {
-  final int index;
+  final OrderModel order;
   final bool isActive;
-  const OrderDescription({
-    super.key,
-    required this.index,
-    required this.isActive,
-  });
+  final bool isDeliver;
+  const OrderDescription(
+      {super.key,
+      required this.order,
+      required this.isActive,
+      required this.isDeliver});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        leading: IconButton(
-          icon: const CircleAvatar(
-            backgroundColor: blackColor,
-            child: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: whiteColor,
-              size: 24,
-            ),
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: (!isDeliver)
+            ? IconButton(
+                icon: const CircleAvatar(
+                  backgroundColor: blackColor,
+                  child: Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: whiteColor,
+                    size: 24,
+                  ),
+                ),
+                onPressed: () => Navigator.pop(context),
+              )
+            : const Center(),
       ),
       body: BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
         builder: (context, state) {
@@ -70,7 +75,7 @@ class OrderDescription extends StatelessWidget {
                                 padding:
                                     const EdgeInsets.only(left: 25, top: 25),
                                 child: Text(
-                                  state.order[index].address,
+                                  order.address,
                                   style: headerTextStyleWhite,
                                 ),
                               ),
@@ -82,7 +87,7 @@ class OrderDescription extends StatelessWidget {
                                     const EdgeInsets.only(top: 25, right: 15),
                                 child: InkWell(
                                   onTap: () {
-                                    openYandexMaps(state.order[index].address);
+                                    openYandexMaps(order.address);
                                   },
                                   borderRadius: BorderRadius.circular(50.0),
                                   child: const CircleAvatar(
@@ -119,13 +124,13 @@ class OrderDescription extends StatelessWidget {
                                     const SizedBox(
                                       width: 10,
                                     ),
-                                    Text(state.order[index].phoneNumber,
+                                    Text(order.phoneNumber,
                                         style: headerTextStyleWhite),
                                   ],
                                 ),
                                 onPressed: () async {
                                   FlutterPhoneDirectCaller.callNumber(
-                                      state.order[index].phoneNumber);
+                                      order.phoneNumber);
                                 },
                               )),
                         ),
@@ -157,16 +162,17 @@ class OrderDescription extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
-                                    'Доставить до: ${formatTime(state.order[index].deliverTo.toString())}'
+                                    'Доставить до: ${formatTime(order.deliverTo.toString())}'
                                     '\n'
                                     '\n'
-                                    'Вид товара: ${getGoodType(state.order[index].goodType)}'
+                                    'Вид товара: ${getGoodType(order.goodType)}'
                                     '\n'
                                     '\n'
-                                    'Способ оплаты: ${getPaymentMethod(state.order[index].payment)}'
+                                    'Способ оплаты: ${getPaymentMethod(order.payment)}'
                                     '\n'
+                                    '${order.iDCourier?.name}'
                                     '\n'
-                                    'Описание: ${state.order[index].review}',
+                                    'Описание: ${order.review}',
                                     style: mainTextStyleWhite,
                                   ),
                                 ],
@@ -174,6 +180,13 @@ class OrderDescription extends StatelessWidget {
                             ),
                           ),
                         ),
+                        isDeliver
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child:
+                                    SliderOrder(orderId: order.id.toString()),
+                              )
+                            : const Center()
                       ],
                     ),
                   ),

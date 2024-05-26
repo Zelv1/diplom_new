@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/create_order_bloc/create_order_bloc.dart';
+import 'package:diplom_new/bloc/deliver_order_bloc/deliver_order_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 //import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/pages/main_page/main_page_courier.dart';
@@ -27,7 +28,9 @@ class _SignInPageState extends State<SignInPage> {
   void initState() {
     super.initState();
     log('AUTH CHECK CACHE IN PAGE');
+    context.read<DeliverOrderBloc>();
     context.read<GetOrderInfoBloc>();
+
     context.read<CreateOrderBloc>();
     context.read<AuthBloc>().add(AuthCheckCacheEvent());
   }
