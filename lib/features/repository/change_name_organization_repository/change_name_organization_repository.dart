@@ -7,14 +7,18 @@ class ChangeNameOrganizationRepository {
   final String newName;
   final String token;
 
-  ChangeNameOrganizationRepository(this.newName, this.vendorId, this.token);
+  ChangeNameOrganizationRepository(
+    this.token,
+    this.vendorId,
+    this.newName,
+  );
 
   Future<String> changeName() async {
     try {
       final response = await http.patch(
         Uri.parse('$BASE_URL/vendor/$vendorId/update_name_of_organization/'),
         headers: {'Authorization': 'Token $token'},
-        body: {'address': newName},
+        body: {'nameOfOrganization': newName},
       );
 
       if (response.statusCode == 200) {

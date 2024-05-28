@@ -1,6 +1,7 @@
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/create_order_bloc/create_order_bloc.dart';
 import 'package:diplom_new/bloc/deliver_order_bloc/deliver_order_bloc.dart';
+import 'package:diplom_new/bloc/edit_profile_data_bloc/edit_profile_data_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/bloc/simple_bloc_observer.dart';
 import 'package:diplom_new/pages/sign_in_page/sign_in_page.dart';
@@ -25,6 +26,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<GetOrderInfoBloc>(create: (context) => GetOrderInfoBloc()),
         BlocProvider<CreateOrderBloc>(create: (context) => CreateOrderBloc()),
         BlocProvider<DeliverOrderBloc>(create: (context) => DeliverOrderBloc()),
+        BlocProvider<EditProfileDataBloc>(
+            create: (context) => EditProfileDataBloc())
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,

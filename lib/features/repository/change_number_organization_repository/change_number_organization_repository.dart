@@ -7,14 +7,18 @@ class ChangeNumberOrganizationRepository {
   final String newPhone;
   final String token;
 
-  ChangeNumberOrganizationRepository(this.newPhone, this.vendorId, this.token);
+  ChangeNumberOrganizationRepository(
+    this.token,
+    this.vendorId,
+    this.newPhone,
+  );
 
-  Future<String> changeName() async {
+  Future<String> changeNumber() async {
     try {
       final response = await http.patch(
         Uri.parse('$BASE_URL/vendor/$vendorId/update_phone_number/'),
         headers: {'Authorization': 'Token $token'},
-        body: {'address': newPhone},
+        body: {'phoneNumber': newPhone},
       );
 
       if (response.statusCode == 200) {

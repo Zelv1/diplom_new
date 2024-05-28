@@ -25,9 +25,10 @@ class SliderOrder extends StatelessWidget {
         color: whiteColor,
       ),
       successIcon: const Icon(Icons.check, color: whiteColor),
-      action: (controller) {
+      action: (controller) async {
         controller.loading();
         context.read<DeliverOrderBloc>().add(FinishOrderEvent(orderId));
+
         controller.success();
       },
       child: Text('Заказ выдан', style: headerTextStyleBlack),

@@ -8,7 +8,10 @@ class ChangeAddressOrganizationRepository {
   final String token;
 
   ChangeAddressOrganizationRepository(
-      this.newAddress, this.vendorId, this.token);
+    this.token,
+    this.vendorId,
+    this.newAddress,
+  );
 
   Future<String> changeAddress() async {
     try {

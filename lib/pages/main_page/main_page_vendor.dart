@@ -160,14 +160,16 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              _getOrderInfoBloc
-                                  .add(DeleteSelectedOrdersEvent());
-                              selectedIndexes.clear();
-                            },
-                            icon: const Icon(Icons.delete, size: 50),
-                          ),
+                          state.selectedOrder?.state != '2'
+                              ? IconButton(
+                                  onPressed: () {
+                                    _getOrderInfoBloc
+                                        .add(DeleteSelectedOrdersEvent());
+                                    selectedIndexes.clear();
+                                  },
+                                  icon: const Icon(Icons.delete, size: 50),
+                                )
+                              : const Center(),
                           IconButton(
                               onPressed: () async {
                                 final imageBytes = await getImageBytes(
@@ -190,13 +192,19 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                         ],
                       ),
                     if (showButton && selectedIndexes.length > 1)
-                      IconButton(
-                        onPressed: () {
-                          _getOrderInfoBloc.add(DeleteSelectedOrdersEvent());
-                          selectedIndexes.clear();
-                        },
-                        icon: const Icon(Icons.delete, size: 50),
-                      ),
+                      (state.selectedOrder?.state != '2')
+                          ? IconButton(
+                              onPressed: () {
+                                _getOrderInfoBloc
+                                    .add(DeleteSelectedOrdersEvent());
+                                selectedIndexes.clear();
+                              },
+                              icon: const Icon(Icons.delete, size: 50),
+                            )
+                          : Text(
+                              'Вы не можете удалить заказ, который находится в пути\n',
+                              style: headerTextStyleBlack,
+                            )
                   ],
                 )
               : Center(
@@ -206,7 +214,7 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                   ),
                 );
         } else {
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         }
       }),
     );

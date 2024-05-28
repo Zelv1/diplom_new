@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:diplom_new/bloc/deliver_order_bloc/deliver_order_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/elements/message_dialog.dart';
 import 'package:diplom_new/elements/order_description.dart';
 import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
@@ -56,7 +57,15 @@ class _MainPageCourierState extends State<MainPageCourier> {
                 iconTheme: const IconThemeData(size: 25, color: whiteColor),
                 actions: [
                   IconButton(
-                      onPressed: () => {scanQR()},
+                      onPressed: () async {
+                        try {
+                          await scanQR();
+                        } catch (e) {
+                          // ignore: use_build_context_synchronously
+                          showMessageDialog(context,
+                              'Платформа не поддерживает данную функцию');
+                        }
+                      },
                       icon: const Icon(
                         Icons.qr_code_scanner,
                       )),

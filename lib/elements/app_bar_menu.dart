@@ -1,4 +1,5 @@
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
+import 'package:diplom_new/elements/message_dialog.dart';
 import 'package:diplom_new/pages/history_page/history_page_courier.dart';
 import 'package:diplom_new/pages/main_page/main_page_courier.dart';
 import 'package:diplom_new/pages/sign_in_page/sign_in_page.dart';
@@ -72,7 +73,14 @@ class AppBarMenu extends StatelessWidget {
                         title:
                             Text('Вызов менеджера', style: mainTextStyleBlack),
                         onTap: () async {
-                          FlutterPhoneDirectCaller.callNumber('+375295601300');
+                          try {
+                            await FlutterPhoneDirectCaller.callNumber(
+                                '+375295601300');
+                          } catch (e) {
+                            // ignore: use_build_context_synchronously
+                            showMessageDialog(context,
+                                'Платформа не поддерживает данную функцию');
+                          }
                         },
                       ),
                       const UnderLine(),

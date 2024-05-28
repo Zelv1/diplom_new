@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/elements/message_dialog.dart';
 import 'package:diplom_new/elements/slider.dart';
 import 'package:diplom_new/features/models/order_model/order_model.dart';
 import 'package:diplom_new/util/checker.dart';
@@ -129,8 +130,14 @@ class OrderDescription extends StatelessWidget {
                                   ],
                                 ),
                                 onPressed: () async {
-                                  FlutterPhoneDirectCaller.callNumber(
-                                      order.phoneNumber);
+                                  try {
+                                    await FlutterPhoneDirectCaller.callNumber(
+                                        order.phoneNumber);
+                                  } catch (e) {
+                                    // ignore: use_build_context_synchronously
+                                    showMessageDialog(context,
+                                        'Платформа не поддерживает данную функцию');
+                                  }
                                 },
                               )),
                         ),

@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:diplom_new/bloc/create_order_bloc/create_order_bloc.dart';
+import 'package:diplom_new/util/regex.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:diplom_new/util/color.dart';
@@ -70,11 +71,11 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildTextFormField(_addressController, 'Укажите адрес', true,
-                r'^(г\.?\s?[А-Яа-я]+,\s*)?(ул\.|пр-т|пер\.)\s?[А-Яа-я]+[А-Яа-я\d\s\-]*\s*,\s*\d{1,3}(?:\\\d{1})?$'),
+            buildTextFormField(
+                _addressController, 'Укажите адрес', true, addressRegex),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             buildTextFormField(_phoneNumberController, 'Номер телефона', true,
-                r'^\+?375\(?([0-9]{2})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{2})[-. ]?([0-9]{2})$'),
+                phoneNumberRegex),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             buildDropdownButtonField(
                 'Выберите тип товара:', _productTypes, _selectedProductType,

@@ -1,8 +1,8 @@
 // ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api
 
-import 'dart:developer';
-
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
+import 'package:diplom_new/bloc/edit_profile_data_bloc/edit_profile_data_bloc.dart';
+import 'package:diplom_new/elements/edit_profile_page.dart';
 import 'package:diplom_new/pages/sign_in_page/sign_in_page.dart';
 import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
@@ -23,7 +23,6 @@ class _VendorProfileState extends State<VendorProfile> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthSuccessState) {
-          log(state.user.vendor!.image.toString());
           return Scaffold(
             body: Column(
               children: [
@@ -71,7 +70,17 @@ class _VendorProfileState extends State<VendorProfile> {
                                 style: headerTextStyleBlack),
                             trailing:
                                 const Icon(Icons.arrow_forward_ios_rounded),
-                            onTap: () {},
+                            onTap: () {
+                              context
+                                  .read<EditProfileDataBloc>()
+                                  .add(EditNameEvent());
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditProfilePage(
+                                            userModel: state.user,
+                                          )));
+                            },
                           ),
                           GrayLine(context),
                           ListTile(
@@ -80,16 +89,36 @@ class _VendorProfileState extends State<VendorProfile> {
                                 style: headerTextStyleBlack),
                             trailing:
                                 const Icon(Icons.arrow_forward_ios_rounded),
-                            onTap: () {},
+                            onTap: () {
+                              context
+                                  .read<EditProfileDataBloc>()
+                                  .add(EditAddressEvent());
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditProfilePage(
+                                            userModel: state.user,
+                                          )));
+                            },
                           ),
                           GrayLine(context),
                           ListTile(
-                            leading: const Icon(Icons.lock),
-                            title: Text('Изменить пароль',
+                            leading: const Icon(Icons.numbers),
+                            title: Text('Изменить номер организации',
                                 style: headerTextStyleBlack),
                             trailing:
                                 const Icon(Icons.arrow_forward_ios_rounded),
-                            onTap: () {},
+                            onTap: () {
+                              context
+                                  .read<EditProfileDataBloc>()
+                                  .add(EditNumberEvent());
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditProfilePage(
+                                            userModel: state.user,
+                                          )));
+                            },
                           ),
                           GrayLine(context),
                         ],
