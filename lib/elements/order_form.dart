@@ -135,22 +135,32 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
   Widget buildDropdownButtonField(String labelText, Map<String, String> items,
       String? selectedItem, Function(String?) onChanged) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.only(top: 10.0, bottom: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Text(labelText, style: headerTextStyleBlack),
-          SizedBox(width: MediaQuery.of(context).size.width * 0.02),
-          DropdownButton<String>(
-            value: selectedItem,
-            onChanged: onChanged,
+          Text(
+            labelText,
             style: headerTextStyleBlack,
-            items: items.keys.map((String itemKey) {
-              return DropdownMenuItem<String>(
-                value: itemKey,
-                child: Text(items[itemKey]!),
-              );
-            }).toList(),
+            maxLines: 1,
+          ),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.02),
+          Flexible(
+            child: DropdownButton<String>(
+              value: selectedItem,
+              onChanged: onChanged,
+              isExpanded: true,
+              items: items.keys.map((String itemKey) {
+                return DropdownMenuItem<String>(
+                  value: itemKey,
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    items[itemKey]!,
+                    maxLines: 1,
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         ],
       ),

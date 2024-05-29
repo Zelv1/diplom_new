@@ -11,8 +11,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class AppBarMenu extends StatelessWidget {
+  final bool isDeliver;
   const AppBarMenu({
     super.key,
+    required this.isDeliver,
   });
 
   @override
@@ -87,18 +89,21 @@ class AppBarMenu extends StatelessWidget {
                     ],
                   ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.exit_to_app),
-                  title: Text('Выйти из аккаунта', style: mainTextStyleBlack),
-                  onTap: () {
-                    context.read<AuthBloc>().add(AuthLogoutEvent());
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignInPage()),
-                    );
-                  },
-                ),
+                (!isDeliver)
+                    ? ListTile(
+                        leading: const Icon(Icons.exit_to_app),
+                        title: Text('Выйти из аккаунта',
+                            style: mainTextStyleBlack),
+                        onTap: () {
+                          context.read<AuthBloc>().add(AuthLogoutEvent());
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignInPage()),
+                          );
+                        },
+                      )
+                    : const Center(),
                 const Padding(
                   padding: EdgeInsets.only(bottom: 1),
                   child: UnderLine(),

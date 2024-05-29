@@ -15,3 +15,5 @@ class ProcessOrderState extends DeliverOrderState {
 }
 
 class WaitProcessOrderState extends DeliverOrderState {}
+
+class OrderHasAlreadyDeliveredState extends DeliverOrderState {}

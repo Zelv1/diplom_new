@@ -5,10 +5,12 @@ import 'package:diplom_new/bloc/deliver_order_bloc/deliver_order_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/elements/message_dialog.dart';
 import 'package:diplom_new/elements/order_description.dart';
+
 import 'package:diplom_new/util/color.dart';
+import 'package:diplom_new/util/find_order.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import 'package:diplom_new/elements/app_bar_menu.dart';
@@ -40,6 +42,8 @@ class _MainPageCourierState extends State<MainPageCourier> {
       listener: (context, state) {
         if (state is WaitProcessOrderState) {
           context.read<GetOrderInfoBloc>().add(GetOrdersEvent());
+        } else if (state is OrderHasAlreadyDeliveredState) {
+          showMessageDialog(context, 'Данный заказ уже в пути или доставлен');
         }
       },
       child: BlocBuilder<DeliverOrderBloc, DeliverOrderState>(
@@ -59,7 +63,38 @@ class _MainPageCourierState extends State<MainPageCourier> {
                   IconButton(
                       onPressed: () async {
                         try {
-                          await scanQR();
+                          String? qr = await scanQR();
+                          showDialog(
+                            // ignore: use_build_context_synchronously
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Внимание!',
+                                  style: authTag,
+                                ),
+                                content: Text(
+                                  'Вы собираетесь взять на доставку заказ №$qr',
+                                  maxLines: null,
+                                  textAlign: TextAlign.justify,
+                                ),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        context.read<DeliverOrderBloc>().add(
+                                            GetDataFromQREvent(orderId: qr!));
+                                      },
+                                      child: Text('Вперед!',
+                                          style: headerTextStyleBlack)),
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('Отмена',
+                                          style: headerTextStyleBlack))
+                                ],
+                              );
+                            },
+                          );
                         } catch (e) {
                           // ignore: use_build_context_synchronously
                           showMessageDialog(context,
@@ -71,7 +106,9 @@ class _MainPageCourierState extends State<MainPageCourier> {
                       )),
                 ],
               ),
-              drawer: const AppBarMenu(),
+              drawer: const AppBarMenu(
+                isDeliver: false,
+              ),
               body: BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
                   builder: (context, state) {
                 if (state is GetOrderInfoLoaded) {
@@ -131,17 +168,16 @@ class _MainPageCourierState extends State<MainPageCourier> {
     );
   }
 
-  Future<void> scanQR() async {
+  Future<String?> scanQR() async {
     try {
       final qrCode = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.QR);
-      if (!mounted) return;
-      setState(() {
-        qrResult = qrCode.toString();
-      });
-    } on PlatformException {
+
+      qrResult = extractBetweenPipes(qrCode.toString());
+    } catch (e) {
       qrResult = 'Fail';
     }
+    return qrResult;
   }
 }
 

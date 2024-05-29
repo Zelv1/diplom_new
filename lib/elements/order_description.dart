@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/elements/app_bar_menu.dart';
 import 'package:diplom_new/elements/message_dialog.dart';
 import 'package:diplom_new/elements/slider.dart';
 import 'package:diplom_new/features/models/order_model/order_model.dart';
@@ -28,6 +29,11 @@ class OrderDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: (isDeliver)
+          ? AppBarMenu(
+              isDeliver: isDeliver,
+            )
+          : null,
       appBar: AppBar(
         centerTitle: true,
         leading: (!isDeliver)
@@ -42,7 +48,7 @@ class OrderDescription extends StatelessWidget {
                 ),
                 onPressed: () => Navigator.pop(context),
               )
-            : const Center(),
+            : null,
       ),
       body: BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
         builder: (context, state) {
@@ -177,7 +183,6 @@ class OrderDescription extends StatelessWidget {
                                     '\n'
                                     'Способ оплаты: ${getPaymentMethod(order.payment)}'
                                     '\n'
-                                    '${order.iDCourier?.name}'
                                     '\n'
                                     'Описание: ${order.review}',
                                     style: mainTextStyleWhite,

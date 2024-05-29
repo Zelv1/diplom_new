@@ -5,6 +5,12 @@ abstract class DeliverOrderEvent {}
 
 class UpdateOrderStatusEvent extends DeliverOrderEvent {}
 
+class GetDataFromQREvent extends DeliverOrderEvent {
+  final String orderId;
+
+  GetDataFromQREvent({required this.orderId});
+}
+
 class ClaimOrderEvent extends DeliverOrderEvent {
   final OrderModel order;
   ClaimOrderEvent(this.order);

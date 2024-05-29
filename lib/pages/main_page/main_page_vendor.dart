@@ -208,9 +208,14 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                   ],
                 )
               : Center(
-                  child: Text(
-                    'Заказы в доставке или обратотке отсутствуют, создайте заказ',
-                    style: headerTextStyleBlack,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: Text(
+                      'Заказы в доставке или обратотке отсутствуют, создайте заказ',
+                      maxLines: null,
+                      textAlign: TextAlign.justify,
+                      style: headerTextStyleBlack,
+                    ),
                   ),
                 );
         } else {
