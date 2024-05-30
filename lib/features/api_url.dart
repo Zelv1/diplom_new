@@ -1,3 +1,3 @@
 // ignore_for_file: constant_identifier_names
 
-const String BASE_URL = 'http://192.168.100.37:8000';
+const String BASE_URL = 'http://94.241.141.213';

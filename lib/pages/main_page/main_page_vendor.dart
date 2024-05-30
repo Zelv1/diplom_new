@@ -1,16 +1,19 @@
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+
 import 'dart:developer';
 
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/cubit/light_dart_theme_cubit.dart';
+import 'package:diplom_new/elements/message_dialog.dart';
 
 import 'package:diplom_new/elements/order_form.dart';
 import 'package:diplom_new/elements/product_card.dart';
 import 'package:diplom_new/elements/qr_code_watch.dart';
 import 'package:diplom_new/elements/vendor_profile.dart';
 import 'package:diplom_new/features/api_url.dart';
-import 'package:diplom_new/features/repository/print_qr_code/print_qr_code.dart';
+import 'package:diplom_new/features/repository/printing/print_qr_code.dart';
 import 'package:diplom_new/pages/history_page/history_page_vendor.dart';
-import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,13 +27,19 @@ class MainPageVendor extends StatefulWidget {
 
 class _MainPageVendorState extends State<MainPageVendor> {
   int _selectedIndex = 0;
-
+  bool light = true;
   final List<Widget> _widgetOptions = <Widget>[
     const GeneralPageVendor(),
     const HistoryPageVendor(),
     const OrderFormWidget(),
     const VendorProfile(),
   ];
+
+  @override
+  void initState() {
+    light = context.read<LightDartThemeCubit>().state;
+    super.initState();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -45,44 +54,64 @@ class _MainPageVendorState extends State<MainPageVendor> {
         if (state is AuthSuccessState) {
           return Scaffold(
             appBar: AppBar(
-                backgroundColor: blackColor,
-                iconTheme: const IconThemeData(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                iconTheme: IconThemeData(
                   size: 25,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
                 actions: [
                   IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.dark_mode,
-                        color: whiteColor,
-                      )),
+                      onPressed: () {
+                        context.read<LightDartThemeCubit>().emit(!light);
+                        setState(() {
+                          light = !light;
+                        });
+                      },
+                      icon: Icon((light) ? Icons.light_mode : Icons.dark_mode)),
                 ]),
-            body: SafeArea(
-              child: _widgetOptions.elementAt(_selectedIndex),
+            body: Center(
+              child: SizedBox(
+                width: 800,
+                child: SafeArea(
+                  child: _widgetOptions.elementAt(_selectedIndex),
+                ),
+              ),
             ),
             bottomNavigationBar: BottomNavigationBar(
-              selectedItemColor: blackColor,
-              unselectedItemColor: blackColor,
+              unselectedItemColor: Theme.of(context).colorScheme.onBackground,
+              selectedItemColor: Theme.of(context).colorScheme.onBackground,
               selectedFontSize: 14,
               unselectedFontSize: 14,
               iconSize: 25,
               currentIndex: _selectedIndex,
               onTap: _onItemTapped,
-              items: const <BottomNavigationBarItem>[
+              items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.list),
+                  icon: Icon(
+                    Icons.list,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                   label: 'Текущие заказы',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.history),
+                  icon: Icon(
+                    Icons.history,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                   label: 'История',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.add),
+                  icon: Icon(
+                    Icons.add,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                   label: 'Добавить',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
+                  icon: Icon(
+                    Icons.person,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                   label: 'Профиль',
                 ),
               ],
@@ -172,12 +201,18 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                               : const Center(),
                           IconButton(
                               onPressed: () async {
-                                final imageBytes = await getImageBytes(
-                                    BASE_URL +
-                                        state.order[selectedIndexes.first!]
-                                            .qrCode
-                                            .toString());
-                                await printDoc(imageBytes);
+                                try {
+                                  final imageBytes = await getImageBytes(
+                                      BASE_URL +
+                                          state.order[selectedIndexes.first!]
+                                              .qrCode
+                                              .toString());
+                                  await printDoc(imageBytes);
+                                } catch (e) {
+                                  // ignore: use_build_context_synchronously
+                                  showMessageDialog(context,
+                                      'Платформа не поддерживает данную функцию');
+                                }
                               },
                               icon: const Icon(Icons.print, size: 50)),
                           IconButton(

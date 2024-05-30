@@ -8,7 +8,6 @@ import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/elements/order_description.dart';
 import 'package:diplom_new/features/models/order_model/order_model.dart';
 import 'package:diplom_new/util/checker.dart';
-import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:diplom_new/util/underline.dart';
 
@@ -59,14 +58,15 @@ class ProductCardModel extends StatelessWidget {
                 height: 200,
                 width: MediaQuery.of(context).size.width * 0.95,
                 decoration: BoxDecoration(
-                  color: isActive ? greyColor : whiteColor,
+                  color: isActive
+                      ? Theme.of(context).colorScheme.tertiaryContainer
+                      : Theme.of(context).colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
-                      color: semiWhiteColor.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
+                      spreadRadius: 0,
+                      blurRadius: 3,
+                      offset: Offset(1, 2),
                     ),
                   ],
                 ),
@@ -76,7 +76,6 @@ class ProductCardModel extends StatelessWidget {
                       height: 35,
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(
-                        color: blackColor,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10.0),
                           topRight: Radius.circular(10.0),

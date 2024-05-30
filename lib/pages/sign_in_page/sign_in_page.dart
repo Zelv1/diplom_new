@@ -9,7 +9,6 @@ import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 //import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/pages/main_page/main_page_courier.dart';
 import 'package:diplom_new/pages/main_page/main_page_vendor.dart';
-import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:diplom_new/util/underline.dart';
 import 'package:flutter/material.dart';
@@ -93,18 +92,17 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Container SignInButton() => Container(
-      decoration: BoxDecoration(
-          color: blackColor, borderRadius: BorderRadius.circular(10)),
-      child: ElevatedButton(
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+      child: FilledButton.tonal(
           onPressed: () => {
                 context.read<AuthBloc>().add(AuthLoginEvent(
                     username: controllerUserName.text,
                     password: controllerPassword.text))
               },
-          style: ElevatedButton.styleFrom(
-            fixedSize: const Size(350, 55),
-            backgroundColor: blackColor,
-          ),
+          style: FilledButton.styleFrom(
+              fixedSize: const Size(350, 55),
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(10))),
           child: Text('Войти', style: headerTextStyleWhite)));
 
   Column SignInTextFields(BuildContext context) {
@@ -138,10 +136,10 @@ class _SignInPageState extends State<SignInPage> {
                 contentPadding: const EdgeInsets.all(15),
                 alignLabelWithHint: true,
                 enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: blackColor, width: 1),
+                    borderSide: const BorderSide(width: 1),
                     borderRadius: BorderRadius.circular(10)),
                 focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: blackColor, width: 1),
+                    borderSide: const BorderSide(width: 2),
                     borderRadius: BorderRadius.circular(11)),
                 hintText: 'Введите логин',
                 prefixIcon: const Icon(Icons.text_rotation_none),
@@ -183,10 +181,10 @@ class _SignInPageState extends State<SignInPage> {
                   contentPadding: const EdgeInsets.all(15),
                   alignLabelWithHint: true,
                   enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: blackColor, width: 1),
+                      borderSide: const BorderSide(width: 1),
                       borderRadius: BorderRadius.circular(10)),
                   focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: blackColor, width: 1),
+                      borderSide: const BorderSide(width: 2),
                       borderRadius: BorderRadius.circular(11)),
                   hintText: 'Введите пароль',
                   prefixIcon: const Icon(Icons.key),

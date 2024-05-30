@@ -3,7 +3,6 @@ import 'package:diplom_new/elements/message_dialog.dart';
 import 'package:diplom_new/pages/history_page/history_page_courier.dart';
 import 'package:diplom_new/pages/main_page/main_page_courier.dart';
 import 'package:diplom_new/pages/sign_in_page/sign_in_page.dart';
-import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:diplom_new/util/underline.dart';
 import 'package:flutter/material.dart';
@@ -23,16 +22,14 @@ class AppBarMenu extends StatelessWidget {
       builder: (context, state) {
         if (state is AuthSuccessState) {
           return Drawer(
-            backgroundColor: whiteColor,
+            backgroundColor: Theme.of(context).colorScheme.background,
             child: Column(
               children: [
                 Expanded(
                   child: ListView(
                     children: [
                       DrawerHeader(
-                        decoration: const BoxDecoration(
-                          color: blackColor,
-                        ),
+                        decoration: const BoxDecoration(),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -91,7 +88,9 @@ class AppBarMenu extends StatelessWidget {
                 ),
                 (!isDeliver)
                     ? ListTile(
-                        leading: const Icon(Icons.exit_to_app),
+                        leading: const Icon(
+                          Icons.exit_to_app,
+                        ),
                         title: Text('Выйти из аккаунта',
                             style: mainTextStyleBlack),
                         onTap: () {

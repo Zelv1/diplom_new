@@ -5,7 +5,6 @@ import 'package:diplom_new/elements/message_dialog.dart';
 
 import 'package:diplom_new/features/models/user_model/user_model.dart';
 import 'package:diplom_new/pages/main_page/main_page_vendor.dart';
-import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/regex.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -27,11 +26,10 @@ class EditProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: blackColor,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios_new,
-            color: whiteColor,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
           onPressed: () => {
             Navigator.pushReplacement(
@@ -113,10 +111,13 @@ class EditProfilePage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 40, bottom: 20),
                   child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: ElevatedButton(
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(10)),
+                    child: FilledButton.tonal(
+                      style: FilledButton.styleFrom(
+                          fixedSize: const Size(350, 55),
+                          shape: ContinuousRectangleBorder(
+                              borderRadius: BorderRadius.circular(10))),
                       onPressed: () => {
                         if (controllerUserName.text.isEmpty)
                           {
@@ -144,10 +145,6 @@ class EditProfilePage extends StatelessWidget {
                                 'Изменения будут видны после повторного захода в приложение'),
                           }
                       },
-                      style: ElevatedButton.styleFrom(
-                        fixedSize: const Size(350, 55),
-                        backgroundColor: Colors.black,
-                      ),
                       child:
                           Text('Внести изменения', style: headerTextStyleWhite),
                     ),

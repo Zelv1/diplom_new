@@ -4,7 +4,6 @@ import 'package:diplom_new/bloc/create_order_bloc/create_order_bloc.dart';
 import 'package:diplom_new/util/regex.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/text_styles.dart';
 
 class OrderFormWidget extends StatefulWidget {
@@ -153,7 +152,6 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
               items: items.keys.map((String itemKey) {
                 return DropdownMenuItem<String>(
                   value: itemKey,
-                  alignment: Alignment.centerRight,
                   child: Text(
                     items[itemKey]!,
                     maxLines: 1,
@@ -169,13 +167,16 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
 
   Widget buildPublishOrderButton() {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.9,
-      height: MediaQuery.of(context).size.height * 0.05,
+      width: 350,
+      height: 55,
       decoration: BoxDecoration(
-        color: blackColor,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: ElevatedButton(
+      child: FilledButton.tonal(
+        style: FilledButton.styleFrom(
+            fixedSize: const Size(350, 55),
+            shape: ContinuousRectangleBorder(
+                borderRadius: BorderRadius.circular(10))),
         onPressed: () {
           if (_formKey.currentState!.validate() &&
               _selectedProductType != null &&
@@ -192,10 +193,7 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
                 context, 'Пожалуйста, заполните все обязательные поля');
           }
         },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: blackColor,
-        ),
-        child: Text('Опубликовать', style: mainTextStyleWhite),
+        child: Text('Опубликовать', style: headerTextStyleWhite),
       ),
     );
   }

@@ -3,10 +3,10 @@ import 'dart:developer';
 
 import 'package:diplom_new/bloc/deliver_order_bloc/deliver_order_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/cubit/light_dart_theme_cubit.dart';
 import 'package:diplom_new/elements/message_dialog.dart';
 import 'package:diplom_new/elements/order_description.dart';
 
-import 'package:diplom_new/util/color.dart';
 import 'package:diplom_new/util/find_order.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -57,44 +57,55 @@ class _MainPageCourierState extends State<MainPageCourier> {
           } else {
             return Scaffold(
               appBar: AppBar(
-                backgroundColor: blackColor,
-                iconTheme: const IconThemeData(size: 25, color: whiteColor),
+                iconTheme: IconThemeData(
+                    size: 25,
+                    color: (context.read<LightDartThemeCubit>().state == false)
+                        ? Theme.of(context).colorScheme.surfaceVariant
+                        : Theme.of(context).colorScheme.onSurfaceVariant),
                 actions: [
                   IconButton(
                       onPressed: () async {
                         try {
                           String? qr = await scanQR();
-                          showDialog(
-                            // ignore: use_build_context_synchronously
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(
-                                  'Внимание!',
-                                  style: authTag,
-                                ),
-                                content: Text(
-                                  'Вы собираетесь взять на доставку заказ №$qr',
-                                  maxLines: null,
-                                  textAlign: TextAlign.justify,
-                                ),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        context.read<DeliverOrderBloc>().add(
-                                            GetDataFromQREvent(orderId: qr!));
-                                      },
-                                      child: Text('Вперед!',
-                                          style: headerTextStyleBlack)),
-                                  TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text('Отмена',
-                                          style: headerTextStyleBlack))
-                                ],
-                              );
-                            },
-                          );
+                          log(qr!);
+                          (qr == 'Fail')
+                              // ignore: use_build_context_synchronously
+                              ? showMessageDialog(context,
+                                  'Платформа не поддерживает данную функцию')
+                              : showDialog(
+                                  // ignore: use_build_context_synchronously
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text(
+                                        'Внимание!',
+                                        style: authTag,
+                                      ),
+                                      content: Text(
+                                        'Вы собираетесь взять на доставку заказ №$qr',
+                                        maxLines: null,
+                                        textAlign: TextAlign.justify,
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              context
+                                                  .read<DeliverOrderBloc>()
+                                                  .add(GetDataFromQREvent(
+                                                      orderId: qr));
+                                            },
+                                            child: Text('Вперед!',
+                                                style: headerTextStyleBlack)),
+                                        TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text('Отмена',
+                                                style: headerTextStyleBlack))
+                                      ],
+                                    );
+                                  },
+                                );
                         } catch (e) {
                           // ignore: use_build_context_synchronously
                           showMessageDialog(context,
@@ -109,58 +120,66 @@ class _MainPageCourierState extends State<MainPageCourier> {
               drawer: const AppBarMenu(
                 isDeliver: false,
               ),
-              body: BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
-                  builder: (context, state) {
-                if (state is GetOrderInfoLoaded) {
-                  log(state.selectedOrder.toString());
-                  bool showButton = state.order.any((order) => order.isActive);
-                  return (state.order.isNotEmpty)
-                      ? Column(
-                          children: [
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: state.order.length,
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    //TODO: фиксануть переключение
-                                    onLongPress: () {
-                                      if (selectedIndexes.contains(index)) {
-                                        selectedIndexes.remove(index);
-                                      } else {
-                                        selectedIndexes.add(index);
-                                      }
-                                      _getOrderInfoBloc.add(
-                                          SelectOrderEvent(orderIndex: index));
+              body: Center(
+                child: SizedBox(
+                  width: 800,
+                  child: BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
+                      builder: (context, state) {
+                    if (state is GetOrderInfoLoaded) {
+                      log(state.selectedOrder.toString());
+                      bool showButton =
+                          state.order.any((order) => order.isActive);
+                      return (state.order.isNotEmpty)
+                          ? Column(
+                              children: [
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: state.order.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        //TODO: фиксануть переключение
+                                        onLongPress: () {
+                                          if (selectedIndexes.contains(index)) {
+                                            selectedIndexes.remove(index);
+                                          } else {
+                                            selectedIndexes.add(index);
+                                          }
+                                          _getOrderInfoBloc.add(
+                                              SelectOrderEvent(
+                                                  orderIndex: index));
+                                        },
+                                        child: ProductCardModel(
+                                          order: state.order[index],
+                                          isActive: state.order[index].isActive,
+                                        ),
+                                      );
                                     },
-                                    child: ProductCardModel(
-                                      order: state.order[index],
-                                      isActive: state.order[index].isActive,
-                                    ),
-                                  );
-                                },
+                                  ),
+                                ),
+                                if (showButton)
+                                  IconButton(
+                                    onPressed: () {
+                                      context.read<DeliverOrderBloc>().add(
+                                          ClaimOrderEvent(
+                                              state.selectedOrder!));
+                                    },
+                                    icon: const Icon(Icons.back_hand_rounded,
+                                        size: 50),
+                                  ),
+                              ],
+                            )
+                          : Center(
+                              child: Text(
+                                "Заказов пока нет, ожидайте",
+                                style: headerTextStyleBlack,
                               ),
-                            ),
-                            if (showButton)
-                              IconButton(
-                                onPressed: () {
-                                  context.read<DeliverOrderBloc>().add(
-                                      ClaimOrderEvent(state.selectedOrder!));
-                                },
-                                icon: const Icon(Icons.back_hand_rounded,
-                                    size: 50),
-                              ),
-                          ],
-                        )
-                      : Center(
-                          child: Text(
-                            "Заказов пока нет, ожидайте",
-                            style: headerTextStyleBlack,
-                          ),
-                        );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              }),
+                            );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  }),
+                ),
+              ),
             );
           }
         },
@@ -191,14 +210,22 @@ class SwitchButton extends StatefulWidget {
 }
 
 class _SwitchButtonState extends State<SwitchButton> {
-  bool light = false;
+  bool light = true;
+
+  @override
+  void initState() {
+    super.initState();
+    light = context.read<LightDartThemeCubit>().state;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Switch(
       value: light,
-      activeColor: whiteColor,
       onChanged: (bool value) {
         setState(() {
+          // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+          context.read<LightDartThemeCubit>().emit(!light);
           light = value;
         });
       },
