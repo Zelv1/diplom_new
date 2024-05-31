@@ -37,14 +37,14 @@ class AppBarMenu extends StatelessWidget {
                               radius: 40,
                               child: ClipOval(
                                 child: Image.network(
-                                  state.user.courier!.image.toString(),
+                                  state.user.courier?.image.toString() ?? '',
                                   fit: BoxFit.cover,
                                 ),
                               ),
                             ),
-                            Text(state.user.courier!.name,
+                            Text(state.user.courier?.name ?? '',
                                 style: headerTextStyleWhite),
-                            Text(state.user.courier!.number,
+                            Text(state.user.courier?.number ?? '',
                                 style: mainTextStyleWhite)
                           ],
                         ),
@@ -59,7 +59,7 @@ class AppBarMenu extends StatelessWidget {
                         leading: const Icon(Icons.history),
                         title: Text('История', style: mainTextStyleBlack),
                         onTap: () => {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>

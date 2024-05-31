@@ -3,6 +3,7 @@ import '../vendor_model/vendor_model.dart';
 
 class OrderModel {
   final bool isActive;
+
   final int id;
   CourierModel? iDCourier;
   VendorModel? iDVendor;

@@ -72,40 +72,47 @@ class _MainPageCourierState extends State<MainPageCourier> {
                               // ignore: use_build_context_synchronously
                               ? showMessageDialog(context,
                                   'Платформа не поддерживает данную функцию')
-                              : showDialog(
-                                  // ignore: use_build_context_synchronously
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        'Внимание!',
-                                        style: authTag,
-                                      ),
-                                      content: Text(
-                                        'Вы собираетесь взять на доставку заказ №$qr',
-                                        maxLines: null,
-                                        textAlign: TextAlign.justify,
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              context
-                                                  .read<DeliverOrderBloc>()
-                                                  .add(GetDataFromQREvent(
-                                                      orderId: qr));
-                                            },
-                                            child: Text('Вперед!',
-                                                style: headerTextStyleBlack)),
-                                        TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: Text('Отмена',
-                                                style: headerTextStyleBlack))
-                                      ],
+                              : (qr == '')
+                                  ? showMessageDialog(
+                                      // ignore: use_build_context_synchronously
+                                      context,
+                                      'Вы не выбрали заказ')
+                                  : showDialog(
+                                      // ignore: use_build_context_synchronously
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            'Внимание!',
+                                            style: authTag,
+                                          ),
+                                          content: Text(
+                                            'Вы собираетесь взять на доставку заказ №$qr',
+                                            maxLines: null,
+                                            textAlign: TextAlign.justify,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  context
+                                                      .read<DeliverOrderBloc>()
+                                                      .add(GetDataFromQREvent(
+                                                          orderId: qr));
+                                                },
+                                                child: Text('Вперед!',
+                                                    style:
+                                                        headerTextStyleBlack)),
+                                            TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: Text('Отмена',
+                                                    style:
+                                                        headerTextStyleBlack))
+                                          ],
+                                        );
+                                      },
                                     );
-                                  },
-                                );
                         } catch (e) {
                           // ignore: use_build_context_synchronously
                           showMessageDialog(context,
@@ -127,8 +134,7 @@ class _MainPageCourierState extends State<MainPageCourier> {
                       builder: (context, state) {
                     if (state is GetOrderInfoLoaded) {
                       log(state.selectedOrder.toString());
-                      bool showButton =
-                          state.order.any((order) => order.isActive);
+
                       return (state.order.isNotEmpty)
                           ? Column(
                               children: [
@@ -139,14 +145,13 @@ class _MainPageCourierState extends State<MainPageCourier> {
                                       return GestureDetector(
                                         //TODO: фиксануть переключение
                                         onLongPress: () {
-                                          if (selectedIndexes.contains(index)) {
-                                            selectedIndexes.remove(index);
-                                          } else {
-                                            selectedIndexes.add(index);
-                                          }
-                                          _getOrderInfoBloc.add(
-                                              SelectOrderEvent(
-                                                  orderIndex: index));
+                                          state.order[index] =
+                                              state.order[index].copyWith(
+                                                  isActive: !state
+                                                      .order[index].isActive);
+                                          context.read<GetOrderInfoBloc>().add(
+                                              UpdateSelectedOrder(
+                                                  orders: state.order));
                                         },
                                         child: ProductCardModel(
                                           order: state.order[index],
@@ -156,12 +161,14 @@ class _MainPageCourierState extends State<MainPageCourier> {
                                     },
                                   ),
                                 ),
-                                if (showButton)
+                                if (state.selectedCount() == 1)
                                   IconButton(
                                     onPressed: () {
                                       context.read<DeliverOrderBloc>().add(
-                                          ClaimOrderEvent(
-                                              state.selectedOrder!));
+                                          ClaimOrderEvent(state.order
+                                              .where((element) =>
+                                                  element.isActive == true)
+                                              .first));
                                     },
                                     icon: const Icon(Icons.back_hand_rounded,
                                         size: 50),

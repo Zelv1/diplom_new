@@ -44,6 +44,26 @@ String formatTime(String receivedDate) {
   return formattedTime;
 }
 
+bool sortTimeForHistory(String date) {
+  DateTime dateTime = DateTime.parse(date);
+  DateTime localDateTime = dateTime.toLocal();
+
+  DateTime now = DateTime.now();
+  DateTime yesterday = now.subtract(const Duration(days: 1));
+
+  if (localDateTime.year == now.year &&
+      localDateTime.month == now.month &&
+      localDateTime.day == now.day) {
+    return true;
+  } else if (localDateTime.year == yesterday.year &&
+      localDateTime.month == yesterday.month &&
+      localDateTime.day == yesterday.day) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 String getGoodType(String goodType) {
   switch (goodType) {
     case '1':

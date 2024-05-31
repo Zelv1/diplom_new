@@ -14,13 +14,15 @@ class GetOrderInfoLoaded extends GetOrderInfoState {
   GetOrderInfoLoaded({required this.order, this.selectedOrder});
 
   GetOrderInfoLoaded copyWith(
-      List<OrderModel>? order, OrderModel? selectedOrder) {
+      {List<OrderModel>? order, OrderModel? selectedOrder}) {
     return GetOrderInfoLoaded(
         order: order ?? this.order,
         selectedOrder: selectedOrder ?? this.selectedOrder);
   }
-}
 
-class CreateOrderSuccessState extends GetOrderInfoState {}
+  int selectedCount() {
+    return order.where((i) => i.isActive == true).length;
+  }
+}
 
 class GetOrderInfoFailed extends GetOrderInfoState {}

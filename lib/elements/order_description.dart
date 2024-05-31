@@ -89,12 +89,13 @@ class OrderDescription extends StatelessWidget {
                                     padding: const EdgeInsets.only(
                                         left: 20, top: 20),
                                     child: Text(
+                                      maxLines: 2,
                                       order.address,
                                       style: headerTextStyleWhite,
                                     ),
                                   ),
                                   const SizedBox(
-                                    width: 100,
+                                    width: 50,
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(

@@ -133,14 +133,15 @@ class GeneralPageVendor extends StatefulWidget {
 
 class _GeneralPageVendorState extends State<GeneralPageVendor> {
   late final GetOrderInfoBloc _getOrderInfoBloc;
-  List<int?> selectedIndexes = [];
 
   @override
   void initState() {
     super.initState();
-    log(selectedIndexes.length.toString());
+
     _getOrderInfoBloc = BlocProvider.of<GetOrderInfoBloc>(context);
-    _getOrderInfoBloc.add(GetOrdersEvent());
+    if (_getOrderInfoBloc.state is GetOrderInfoInitial) {
+      _getOrderInfoBloc.add(GetOrdersEvent());
+    }
   }
 
   @override
@@ -149,8 +150,6 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
       body: BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
           builder: (context, state) {
         if (state is GetOrderInfoLoaded) {
-          bool showButton = state.order.any((order) => order.isActive);
-
           return (state.order.isNotEmpty)
               ? Column(
                   children: [
@@ -158,24 +157,14 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                       child: ListView.builder(
                         itemCount: state.order.length,
                         itemBuilder: (context, index) {
-                          final isSelected = selectedIndexes;
-                          log(selectedIndexes.toString());
                           log('на главной ${state.order[index].isActive.toString()}');
                           return GestureDetector(
                             onLongPress: () {
                               //TODO: фиксануть переключение
-                              log(state.order[index].isActive.toString());
-                              if (isSelected.contains(index)) {
-                                context
-                                    .read<GetOrderInfoBloc>()
-                                    .add(SelectOrderEvent(orderIndex: index));
-                                isSelected.remove(index);
-                              } else {
-                                isSelected.add(index);
-                                context
-                                    .read<GetOrderInfoBloc>()
-                                    .add(SelectOrderEvent(orderIndex: index));
-                              }
+                              state.order[index] = state.order[index].copyWith(
+                                  isActive: !state.order[index].isActive);
+                              context.read<GetOrderInfoBloc>().add(
+                                  UpdateSelectedOrder(orders: state.order));
                             },
                             child: ProductCardModel(
                               order: state.order[index],
@@ -185,7 +174,7 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                         },
                       ),
                     ),
-                    if (showButton && selectedIndexes.length == 1)
+                    if (state.selectedCount() == 1)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -194,7 +183,6 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                                   onPressed: () {
                                     _getOrderInfoBloc
                                         .add(DeleteSelectedOrdersEvent());
-                                    selectedIndexes.clear();
                                   },
                                   icon: const Icon(Icons.delete, size: 50),
                                 )
@@ -204,9 +192,12 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                                 try {
                                   final imageBytes = await getImageBytes(
                                       BASE_URL +
-                                          state.order[selectedIndexes.first!]
-                                              .qrCode
-                                              .toString());
+                                          (state.order
+                                                  .where((element) =>
+                                                      element.isActive == true)
+                                                  .first
+                                                  .qrCode ??
+                                              ''));
                                   await printDoc(imageBytes);
                                 } catch (e) {
                                   // ignore: use_build_context_synchronously
@@ -221,18 +212,23 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => QRCodeWatcher(
-                                            index: selectedIndexes.first)));
+                                            url: state.order
+                                                    .where((element) =>
+                                                        element.isActive ==
+                                                        true)
+                                                    .first
+                                                    .qrCode ??
+                                                '')));
                               },
                               icon: const Icon(Icons.info_outlined, size: 50)),
                         ],
                       ),
-                    if (showButton && selectedIndexes.length > 1)
+                    if (state.selectedCount() > 1)
                       (state.selectedOrder?.state != '2')
                           ? IconButton(
                               onPressed: () {
                                 _getOrderInfoBloc
                                     .add(DeleteSelectedOrdersEvent());
-                                selectedIndexes.clear();
                               },
                               icon: const Icon(Icons.delete, size: 50),
                             )
@@ -248,7 +244,7 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                     child: Text(
                       'Заказы в доставке или обратотке отсутствуют, создайте заказ',
                       maxLines: null,
-                      textAlign: TextAlign.justify,
+                      textAlign: TextAlign.center,
                       style: headerTextStyleBlack,
                     ),
                   ),

@@ -55,7 +55,7 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
             );
           } else {
             return const Center(
-              child: Text('что-то пошло не так'),
+              child: CircularProgressIndicator(),
             );
           }
         },

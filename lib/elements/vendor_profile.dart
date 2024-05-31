@@ -73,7 +73,7 @@ class _VendorProfileState extends State<VendorProfile> {
                               context
                                   .read<EditProfileDataBloc>()
                                   .add(EditNameEvent());
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => EditProfilePage(
@@ -92,7 +92,7 @@ class _VendorProfileState extends State<VendorProfile> {
                               context
                                   .read<EditProfileDataBloc>()
                                   .add(EditAddressEvent());
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => EditProfilePage(
@@ -111,7 +111,7 @@ class _VendorProfileState extends State<VendorProfile> {
                               context
                                   .read<EditProfileDataBloc>()
                                   .add(EditNumberEvent());
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => EditProfilePage(

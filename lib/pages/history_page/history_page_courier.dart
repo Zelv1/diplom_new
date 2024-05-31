@@ -1,6 +1,5 @@
-import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/bloc/get_order_history_bloc/get_order_history_bloc.dart';
 import 'package:diplom_new/elements/product_card.dart';
-import 'package:diplom_new/pages/main_page/main_page_courier.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,10 +12,14 @@ class HistoryPageCourier extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPageCourier> {
+  late final GetOrderHistoryBloc _getOrderHistoryBloc;
   @override
   void initState() {
     super.initState();
-    context.read<GetOrderInfoBloc>().add(GetHistoryEvent());
+    _getOrderHistoryBloc = BlocProvider.of<GetOrderHistoryBloc>(context);
+    if (_getOrderHistoryBloc.state is GetOrderHistoryInitial) {
+      _getOrderHistoryBloc.add(GetHistoryEvent());
+    }
   }
 
   @override
@@ -30,24 +33,29 @@ class _HistoryPageState extends State<HistoryPageCourier> {
               color: Theme.of(context).colorScheme.onPrimary,
             ),
             onPressed: () => {
-              Navigator.pushReplacement(
+              Navigator.pop(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const MainPageCourier()),
+                // MaterialPageRoute(
+                //     builder: (context) => const MainPageCourier()),
               ),
             },
           ),
         ),
-        body: BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
+        body: BlocBuilder<GetOrderHistoryBloc, GetOrderHistoryState>(
           builder: (context, state) {
-            if (state is GetOrderInfoLoaded) {
-              return ListView.builder(
-                  itemCount: state.order.length,
-                  itemBuilder: (context, index) {
-                    return ProductCardModel(
-                      order: state.order[state.order.length - 1 - index],
-                    );
-                  });
+            if (state is GetOrderHistoryLoaded) {
+              return ListView(
+                  children: state
+                      .sortedOrders()
+                      .map(
+                        (e) => ProductCardModel(order: e),
+                      )
+                      .toList()
+
+                  //  ProductCardModel(
+                  //   order: state.order[state.order.length - 1 - index],
+                  // );
+                  );
             }
             return const Center(child: Text('История пуста'));
           },

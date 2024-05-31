@@ -2,6 +2,7 @@ import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/create_order_bloc/create_order_bloc.dart';
 import 'package:diplom_new/bloc/deliver_order_bloc/deliver_order_bloc.dart';
 import 'package:diplom_new/bloc/edit_profile_data_bloc/edit_profile_data_bloc.dart';
+import 'package:diplom_new/bloc/get_order_history_bloc/get_order_history_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/bloc/simple_bloc_observer.dart';
 import 'package:diplom_new/cubit/light_dart_theme_cubit.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
         BlocProvider<GetOrderInfoBloc>(create: (_) => GetOrderInfoBloc()),
+        BlocProvider<GetOrderHistoryBloc>(create: (_) => GetOrderHistoryBloc()),
         BlocProvider<CreateOrderBloc>(create: (_) => CreateOrderBloc()),
         BlocProvider<DeliverOrderBloc>(create: (_) => DeliverOrderBloc()),
         BlocProvider<EditProfileDataBloc>(create: (_) => EditProfileDataBloc()),
