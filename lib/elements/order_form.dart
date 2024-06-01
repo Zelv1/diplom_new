@@ -108,10 +108,10 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
       validator: validate
           ? (value) {
               if (value == null || value.isEmpty) {
-                return 'Пожалуйста, укажите $labelText';
+                return 'Пожалуйста, укажите зачение';
               } else if (regexPattern != null &&
                   !RegExp(regexPattern).hasMatch(value)) {
-                return 'Пожалуйста, введите корректный $labelText';
+                return 'Пожалуйста, введите корректное значение';
               }
               return null;
             }

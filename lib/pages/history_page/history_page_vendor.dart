@@ -4,6 +4,7 @@ import 'package:diplom_new/elements/product_card.dart';
 import 'package:diplom_new/features/repository/printing/print_order_report.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HistoryPageVendor extends StatefulWidget {
   const HistoryPageVendor({super.key});
@@ -15,6 +16,8 @@ class HistoryPageVendor extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPageVendor> {
   late final GetOrderHistoryBloc _getOrderHistoryBloc;
   List<int?> selectedIndexes = [];
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   @override
   void initState() {
     super.initState();
@@ -22,6 +25,10 @@ class _HistoryPageState extends State<HistoryPageVendor> {
     if (_getOrderHistoryBloc.state is GetOrderHistoryInitial) {
       _getOrderHistoryBloc.add(GetHistoryEvent());
     }
+  }
+
+  void onRefresh() {
+    context.read<GetOrderHistoryBloc>().add(GetHistoryEvent());
   }
 
   @override
@@ -33,23 +40,28 @@ class _HistoryPageState extends State<HistoryPageVendor> {
         return Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                  itemCount: state.order.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onLongPress: () {
-                        state.order[index] = state.order[index]
-                            .copyWith(isActive: !state.order[index].isActive);
-                        context
-                            .read<GetOrderHistoryBloc>()
-                            .add(UpdateSelectedOrder(orders: state.order));
-                      },
-                      child: ProductCardModel(
-                        order: state.order[state.order.length - 1 - index],
-                        isActive: state.order[index].isActive,
-                      ),
-                    );
-                  }),
+              child: SmartRefresher(
+                controller: _refreshController,
+                enablePullDown: true,
+                onRefresh: onRefresh,
+                child: ListView.builder(
+                    itemCount: state.order.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onLongPress: () {
+                          state.order[index] = state.order[index]
+                              .copyWith(isActive: !state.order[index].isActive);
+                          context
+                              .read<GetOrderHistoryBloc>()
+                              .add(UpdateSelectedOrder(orders: state.order));
+                        },
+                        child: ProductCardModel(
+                          order: state.order[state.order.length - 1 - index],
+                          isActive: state.order[index].isActive,
+                        ),
+                      );
+                    }),
+              ),
             ),
             if (state.selectedCount() == 1)
               IconButton(

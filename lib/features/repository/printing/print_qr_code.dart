@@ -38,11 +38,4 @@ Future<Uint8List> getImageBytes(String imageUrl) async {
   log(imageUrl);
   final response = await http.get(Uri.parse(imageUrl));
   return response.bodyBytes;
-  // final response = await http.get(Uri.parse(imageUrl));
-  // final blob = html.Blob([response.bodyBytes]);
-  // final reader = html.FileReader();
-  // reader.readAsArrayBuffer(blob);
-  // final bytes = await Future.wait([reader.onLoadEnd.first])
-  //     .then((_) => reader.result as Uint8List);
-  // return bytes;
 }

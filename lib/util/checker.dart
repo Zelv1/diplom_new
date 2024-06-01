@@ -44,6 +44,14 @@ String formatTime(String receivedDate) {
   return formattedTime;
 }
 
+String formatTimeToCard(String receivedDate) {
+  DateTime dateTime = DateTime.parse(receivedDate);
+  DateTime localDateTime = dateTime.toLocal();
+  DateFormat timeFormat = DateFormat('dd-MM-yy HH:mm');
+  String formattedTime = timeFormat.format(localDateTime);
+  return formattedTime;
+}
+
 bool sortTimeForHistory(String date) {
   DateTime dateTime = DateTime.parse(date);
   DateTime localDateTime = dateTime.toLocal();

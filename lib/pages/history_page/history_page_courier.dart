@@ -3,6 +3,7 @@ import 'package:diplom_new/elements/product_card.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HistoryPageCourier extends StatefulWidget {
   const HistoryPageCourier({super.key});
@@ -13,6 +14,8 @@ class HistoryPageCourier extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPageCourier> {
   late final GetOrderHistoryBloc _getOrderHistoryBloc;
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   @override
   void initState() {
     super.initState();
@@ -20,6 +23,10 @@ class _HistoryPageState extends State<HistoryPageCourier> {
     if (_getOrderHistoryBloc.state is GetOrderHistoryInitial) {
       _getOrderHistoryBloc.add(GetHistoryEvent());
     }
+  }
+
+  void onRefresh() {
+    context.read<GetOrderHistoryBloc>().add(GetHistoryEvent());
   }
 
   @override
@@ -44,15 +51,20 @@ class _HistoryPageState extends State<HistoryPageCourier> {
         body: BlocBuilder<GetOrderHistoryBloc, GetOrderHistoryState>(
           builder: (context, state) {
             if (state is GetOrderHistoryLoaded) {
-              return ListView(
-                  children: state
-                      .sortedOrders()
-                      .map(
-                        (e) => ProductCardModel(order: e),
-                      )
-                      .toList());
+              return SmartRefresher(
+                enablePullDown: true,
+                onRefresh: onRefresh,
+                controller: _refreshController,
+                child: ListView(
+                    children: state
+                        .sortedOrders()
+                        .map(
+                          (e) => ProductCardModel(order: e),
+                        )
+                        .toList()),
+              );
             }
-            return const Center(child: Text('История пуста'));
+            return const Center(child: CircularProgressIndicator());
           },
         ));
   }

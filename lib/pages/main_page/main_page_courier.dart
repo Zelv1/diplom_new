@@ -16,6 +16,7 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:diplom_new/elements/app_bar_menu.dart';
 import 'package:diplom_new/elements/product_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MainPageCourier extends StatefulWidget {
   const MainPageCourier({super.key});
@@ -28,12 +29,18 @@ class _MainPageCourierState extends State<MainPageCourier> {
   String qrResult = '';
   late final GetOrderInfoBloc _getOrderInfoBloc;
   List<int?> selectedIndexes = [];
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   @override
   void initState() {
     super.initState();
     context.read<DeliverOrderBloc>().add(UpdateOrderStatusEvent());
     _getOrderInfoBloc = BlocProvider.of<GetOrderInfoBloc>(context);
     _getOrderInfoBloc.add(GetOrdersEvent());
+  }
+
+  void onRefresh() {
+    context.read<GetOrderInfoBloc>().add(GetOrdersEvent());
   }
 
   @override
@@ -139,25 +146,32 @@ class _MainPageCourierState extends State<MainPageCourier> {
                           ? Column(
                               children: [
                                 Expanded(
-                                  child: ListView.builder(
-                                    itemCount: state.order.length,
-                                    itemBuilder: (context, index) {
-                                      return GestureDetector(
-                                        onLongPress: () {
-                                          state.order[index] =
-                                              state.order[index].copyWith(
-                                                  isActive: !state
-                                                      .order[index].isActive);
-                                          context.read<GetOrderInfoBloc>().add(
-                                              UpdateSelectedOrder(
-                                                  orders: state.order));
-                                        },
-                                        child: ProductCardModel(
-                                          order: state.order[index],
-                                          isActive: state.order[index].isActive,
-                                        ),
-                                      );
-                                    },
+                                  child: SmartRefresher(
+                                    enablePullDown: true,
+                                    onRefresh: onRefresh,
+                                    controller: _refreshController,
+                                    child: ListView.builder(
+                                      itemCount: state.order.length,
+                                      itemBuilder: (context, index) {
+                                        return GestureDetector(
+                                          onLongPress: () {
+                                            state.order[index] =
+                                                state.order[index].copyWith(
+                                                    isActive: !state
+                                                        .order[index].isActive);
+                                            context
+                                                .read<GetOrderInfoBloc>()
+                                                .add(UpdateSelectedOrder(
+                                                    orders: state.order));
+                                          },
+                                          child: ProductCardModel(
+                                            order: state.order[index],
+                                            isActive:
+                                                state.order[index].isActive,
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
                                 if (state.selectedCount() == 1)
@@ -174,14 +188,14 @@ class _MainPageCourierState extends State<MainPageCourier> {
                                   ),
                               ],
                             )
-                          : Center(
-                              child: Text(
-                                "Заказов пока нет, ожидайте",
-                                style: headerTextStyleBlack,
-                              ),
-                            );
+                          : const Center(child: CircularProgressIndicator());
                     } else {
-                      return const Center(child: CircularProgressIndicator());
+                      return Center(
+                        child: Text(
+                          "Заказов пока нет, ожидайте",
+                          style: headerTextStyleBlack,
+                        ),
+                      );
                     }
                   }),
                 ),

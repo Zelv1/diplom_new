@@ -83,7 +83,7 @@ class ProductCardModel extends StatelessWidget {
                         style: mainTextStyleWhite,
                       ),
                       Text(
-                        'Доставить до ${formatTime(order.deliverTo.toString())}',
+                        'Доставить до ${formatTimeToCard(order.deliverTo.toString())}',
                         style: mainTextStyleWhite,
                       )
                     ],

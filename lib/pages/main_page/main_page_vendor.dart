@@ -17,6 +17,7 @@ import 'package:diplom_new/pages/history_page/history_page_vendor.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MainPageVendor extends StatefulWidget {
   const MainPageVendor({super.key});
@@ -133,7 +134,8 @@ class GeneralPageVendor extends StatefulWidget {
 
 class _GeneralPageVendorState extends State<GeneralPageVendor> {
   late final GetOrderInfoBloc _getOrderInfoBloc;
-
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   @override
   void initState() {
     super.initState();
@@ -142,6 +144,10 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
     if (_getOrderInfoBloc.state is GetOrderInfoInitial) {
       _getOrderInfoBloc.add(GetOrdersEvent());
     }
+  }
+
+  void onRefresh() {
+    context.read<GetOrderInfoBloc>().add(GetOrdersEvent());
   }
 
   @override
@@ -154,23 +160,29 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
               ? Column(
                   children: [
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: state.order.length,
-                        itemBuilder: (context, index) {
-                          log('на главной ${state.order[index].isActive.toString()}');
-                          return GestureDetector(
-                            onLongPress: () {
-                              state.order[index] = state.order[index].copyWith(
-                                  isActive: !state.order[index].isActive);
-                              context.read<GetOrderInfoBloc>().add(
-                                  UpdateSelectedOrder(orders: state.order));
-                            },
-                            child: ProductCardModel(
-                              order: state.order[index],
-                              isActive: state.order[index].isActive,
-                            ),
-                          );
-                        },
+                      child: SmartRefresher(
+                        enablePullDown: true,
+                        onRefresh: onRefresh,
+                        controller: _refreshController,
+                        child: ListView.builder(
+                          itemCount: state.order.length,
+                          itemBuilder: (context, index) {
+                            log('на главной ${state.order[index].isActive.toString()}');
+                            return GestureDetector(
+                              onLongPress: () {
+                                state.order[index] = state.order[index]
+                                    .copyWith(
+                                        isActive: !state.order[index].isActive);
+                                context.read<GetOrderInfoBloc>().add(
+                                    UpdateSelectedOrder(orders: state.order));
+                              },
+                              child: ProductCardModel(
+                                order: state.order[index],
+                                isActive: state.order[index].isActive,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                     if (state.selectedCount() == 1)
