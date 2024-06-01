@@ -37,7 +37,6 @@ class _HistoryPageState extends State<HistoryPageVendor> {
                   itemCount: state.order.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
-                      //TODO: фиксануть переключение
                       onLongPress: () {
                         state.order[index] = state.order[index]
                             .copyWith(isActive: !state.order[index].isActive);

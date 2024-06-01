@@ -160,7 +160,6 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                           log('на главной ${state.order[index].isActive.toString()}');
                           return GestureDetector(
                             onLongPress: () {
-                              //TODO: фиксануть переключение
                               state.order[index] = state.order[index].copyWith(
                                   isActive: !state.order[index].isActive);
                               context.read<GetOrderInfoBloc>().add(

@@ -32,7 +32,7 @@ class EditProfilePage extends StatelessWidget {
             color: Theme.of(context).colorScheme.onPrimary,
           ),
           onPressed: () => {
-            Navigator.pushReplacement(
+            Navigator.pop(
               context,
               MaterialPageRoute(builder: (context) => const MainPageVendor()),
             ),

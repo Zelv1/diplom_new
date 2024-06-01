@@ -143,7 +143,6 @@ class _MainPageCourierState extends State<MainPageCourier> {
                                     itemCount: state.order.length,
                                     itemBuilder: (context, index) {
                                       return GestureDetector(
-                                        //TODO: фиксануть переключение
                                         onLongPress: () {
                                           state.order[index] =
                                               state.order[index].copyWith(

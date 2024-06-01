@@ -50,12 +50,7 @@ class _HistoryPageState extends State<HistoryPageCourier> {
                       .map(
                         (e) => ProductCardModel(order: e),
                       )
-                      .toList()
-
-                  //  ProductCardModel(
-                  //   order: state.order[state.order.length - 1 - index],
-                  // );
-                  );
+                      .toList());
             }
             return const Center(child: Text('История пуста'));
           },

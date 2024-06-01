@@ -1,6 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:diplom_new/bloc/create_order_bloc/create_order_bloc.dart';
+import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
+import 'package:diplom_new/elements/message_dialog.dart';
 import 'package:diplom_new/util/regex.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -70,11 +72,11 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildTextFormField(
-                _addressController, 'Укажите адрес', true, addressRegex),
+            buildTextFormField(_addressController, 'Пример: ул. Адрес, 99/9',
+                true, addressRegex),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
-            buildTextFormField(_phoneNumberController, 'Номер телефона', true,
-                phoneNumberRegex),
+            buildTextFormField(_phoneNumberController, 'Пример: +375331234567',
+                true, phoneNumberRegex),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             buildDropdownButtonField(
                 'Выберите тип товара:', _productTypes, _selectedProductType,
@@ -181,13 +183,20 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
           if (_formKey.currentState!.validate() &&
               _selectedProductType != null &&
               _selectedPaymentMethod != null) {
-            context.read<CreateOrderBloc>().add(CreateOrderEvent(
-                  _addressController.text,
-                  _selectedPaymentMethod!,
-                  _phoneNumberController.text,
-                  _selectedProductType!,
-                  _commentsController.text,
-                ));
+            try {
+              context.read<CreateOrderBloc>().add(CreateOrderEvent(
+                    _addressController.text,
+                    _selectedPaymentMethod!,
+                    _phoneNumberController.text,
+                    _selectedProductType!,
+                    _commentsController.text,
+                  ));
+              context.read<GetOrderInfoBloc>().add(GetOrdersEvent());
+            } catch (e) {
+              showMessageDialog(context, 'Что-то пошло не так :(');
+            }
+
+            showMessageDialog(context, 'Заказ успешно создан');
           } else {
             showSnackBarMessage(
                 context, 'Пожалуйста, заполните все обязательные поля');
