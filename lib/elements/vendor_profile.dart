@@ -77,7 +77,7 @@ class _VendorProfileState extends State<VendorProfile> {
                             ListTile(
                               leading: const Icon(Icons.edit),
                               title: Text('Редактировать профиль',
-                                  style: headerTextStyleBlack),
+                                  style: headerTextStyle),
                               trailing:
                                   const Icon(Icons.arrow_forward_ios_rounded),
                               onTap: () {
@@ -96,7 +96,7 @@ class _VendorProfileState extends State<VendorProfile> {
                             ListTile(
                               leading: const Icon(Icons.location_on),
                               title: Text('Изменить адрес',
-                                  style: headerTextStyleBlack),
+                                  style: headerTextStyle),
                               trailing:
                                   const Icon(Icons.arrow_forward_ios_rounded),
                               onTap: () {
@@ -115,7 +115,7 @@ class _VendorProfileState extends State<VendorProfile> {
                             ListTile(
                               leading: const Icon(Icons.numbers),
                               title: Text('Изменить номер организации',
-                                  style: headerTextStyleBlack),
+                                  style: headerTextStyle),
                               trailing:
                                   const Icon(Icons.arrow_forward_ios_rounded),
                               onTap: () {
@@ -152,8 +152,7 @@ class _VendorProfileState extends State<VendorProfile> {
                   ),
                   child: ListTile(
                     leading: const Icon(Icons.exit_to_app),
-                    title:
-                        Text('Выйти из аккаунта', style: headerTextStyleBlack),
+                    title: Text('Выйти из аккаунта', style: headerTextStyle),
                     onTap: () {
                       context.read<AuthBloc>().add(AuthLogoutEvent());
                       Navigator.pushReplacement(

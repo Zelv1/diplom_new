@@ -14,17 +14,12 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitialState()) {
-    log('AUTH BLOC');
-    AuthMiddleware.authData.listen((event) {
-      log('===== event=$event =====');
-    });
-    AuthMiddleware.user.listen((event) {
-      log('===== event=$event =====');
-    });
+    AuthMiddleware.authData.listen((event) {});
+    AuthMiddleware.user.listen((event) {});
 
     on<AuthCheckCacheEvent>((event, emit) async {
       emit(AuthLoadingState());
-      log('AUTH CHECK CACHE');
+
       try {
         final token = await authRepositoryGetLocalToken();
         if (token == null) {
@@ -86,15 +81,11 @@ class AuthMiddleware {
       StreamController<UserModel?>.broadcast();
 
   static void saveAuthData(String? authData) {
-    log('работает saveData');
     _authData.add(authData);
-    log('$authData');
   }
 
   static void saveUser(UserModel? user) {
-    log('работает saveUser');
     _user.add(user);
-    log('$user');
   }
 
   static Stream get authData => _authData.stream;

@@ -10,18 +10,10 @@ TextStyle authTag = const TextStyle(
   fontWeight: FontWeight.w500,
 );
 
-TextStyle headerTextStyleWhite = const TextStyle(
+TextStyle headerTextStyle = const TextStyle(
   fontSize: 16,
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w400,
 );
 
-TextStyle headerTextStyleBlack = const TextStyle(
-  fontSize: 16,
-  fontWeight: FontWeight.w500,
-);
-
-TextStyle mainTextStyleBlack =
-    const TextStyle(fontSize: 13, fontWeight: FontWeight.w300);
-
-TextStyle mainTextStyleWhite =
+TextStyle mainTextStyle =
     const TextStyle(fontSize: 13, fontWeight: FontWeight.w300);

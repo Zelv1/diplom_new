@@ -17,11 +17,9 @@ class EditProfileDataBloc
   EditProfileDataBloc() : super(EditProfileDataInitial()) {
     AuthMiddleware.authData.listen((event) {
       _token = event.toString();
-      log('===== event=$event =====');
     });
     AuthMiddleware.user.listen((event) {
       vendorId = event.vendor?.id.toString();
-      log('===== event=$event =====');
     });
 
     on<EditAddressEvent>(

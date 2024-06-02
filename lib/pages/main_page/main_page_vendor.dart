@@ -1,7 +1,5 @@
 // ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
 
-import 'dart:developer';
-
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
 import 'package:diplom_new/cubit/light_dart_theme_cubit.dart';
@@ -167,7 +165,6 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                         child: ListView.builder(
                           itemCount: state.order.length,
                           itemBuilder: (context, index) {
-                            log('на главной ${state.order[index].isActive.toString()}');
                             return GestureDetector(
                               onLongPress: () {
                                 state.order[index] = state.order[index]
@@ -245,7 +242,7 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                             )
                           : Text(
                               'Вы не можете удалить заказ, который находится в пути\n',
-                              style: headerTextStyleBlack,
+                              style: headerTextStyle,
                             )
                   ],
                 )
@@ -256,7 +253,7 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                       'Заказы в доставке или обратотке отсутствуют, создайте заказ',
                       maxLines: null,
                       textAlign: TextAlign.center,
-                      style: headerTextStyleBlack,
+                      style: headerTextStyle,
                     ),
                   ),
                 );

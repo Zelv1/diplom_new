@@ -80,15 +80,12 @@ class DeliverOrderBloc extends Bloc<DeliverOrderEvent, DeliverOrderState> {
         log(e.toString());
       }
     }));
-    log('+++++++++++++++ AUTH DATA  fhdhfhfnf +++++++++++++++');
+
     AuthMiddleware.authData.listen((event) {
-      log('===== event=$event =====');
       _token = event.toString();
     });
-    log('+++++++++++++++ USER DATA +++++++++++++++');
-    AuthMiddleware.user.listen((event) {
-      log('===== event=$event =====');
 
+    AuthMiddleware.user.listen((event) {
       courierId = event.courier?.id.toString();
     });
   }

@@ -1,6 +1,4 @@
 // ignore_for_file: non_constant_identifier_names
-import 'dart:developer';
-
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/create_order_bloc/create_order_bloc.dart';
 import 'package:diplom_new/bloc/deliver_order_bloc/deliver_order_bloc.dart';
@@ -28,7 +26,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void initState() {
     super.initState();
-    log('AUTH CHECK CACHE IN PAGE');
+
     context.read<EditProfileDataBloc>();
     context.read<DeliverOrderBloc>();
     context.read<GetOrderHistoryBloc>();
@@ -96,16 +94,16 @@ class _SignInPageState extends State<SignInPage> {
   Container SignInButton() => Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
       child: FilledButton.tonal(
-          onPressed: () => {
-                context.read<AuthBloc>().add(AuthLoginEvent(
-                    username: controllerUserName.text,
-                    password: controllerPassword.text))
-              },
+          onPressed: () {
+            context.read<AuthBloc>().add(AuthLoginEvent(
+                username: controllerUserName.text,
+                password: controllerPassword.text));
+          },
           style: FilledButton.styleFrom(
               fixedSize: const Size(350, 55),
               shape: ContinuousRectangleBorder(
                   borderRadius: BorderRadius.circular(10))),
-          child: Text('Войти', style: headerTextStyleWhite)));
+          child: Text('Войти', style: headerTextStyle)));
 
   Column SignInTextFields(BuildContext context) {
     return Column(
@@ -118,7 +116,7 @@ class _SignInPageState extends State<SignInPage> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: Text('Логин', style: headerTextStyleBlack),
+                  child: Text('Логин', style: headerTextStyle),
                 ),
                 const Expanded(
                   flex: 3,
@@ -159,7 +157,7 @@ class _SignInPageState extends State<SignInPage> {
                   flex: 1,
                   child: Text(
                     'Пароль',
-                    style: headerTextStyleBlack,
+                    style: headerTextStyle,
                   ),
                 ),
                 const Expanded(

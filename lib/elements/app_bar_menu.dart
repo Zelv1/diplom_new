@@ -43,21 +43,21 @@ class AppBarMenu extends StatelessWidget {
                               ),
                             ),
                             Text(state.user.courier?.name ?? '',
-                                style: headerTextStyleWhite),
+                                style: headerTextStyle),
                             Text(state.user.courier?.number ?? '',
-                                style: mainTextStyleWhite)
+                                style: mainTextStyle)
                           ],
                         ),
                       ),
                       ListTile(
                         leading: const Icon(Icons.dark_mode_rounded),
-                        title: Text('Темная тема', style: mainTextStyleBlack),
+                        title: Text('Темная тема', style: mainTextStyle),
                         trailing: const SwitchButton(),
                       ),
                       const UnderLine(),
                       ListTile(
                         leading: const Icon(Icons.history),
-                        title: Text('История', style: mainTextStyleBlack),
+                        title: Text('История', style: mainTextStyle),
                         onTap: () => {
                           Navigator.push(
                               context,
@@ -69,8 +69,7 @@ class AppBarMenu extends StatelessWidget {
                       const UnderLine(),
                       ListTile(
                         leading: const Icon(Icons.phone_android_rounded),
-                        title:
-                            Text('Вызов менеджера', style: mainTextStyleBlack),
+                        title: Text('Вызов менеджера', style: mainTextStyle),
                         onTap: () async {
                           try {
                             await FlutterPhoneDirectCaller.callNumber(
@@ -91,8 +90,7 @@ class AppBarMenu extends StatelessWidget {
                         leading: const Icon(
                           Icons.exit_to_app,
                         ),
-                        title: Text('Выйти из аккаунта',
-                            style: mainTextStyleBlack),
+                        title: Text('Выйти из аккаунта', style: mainTextStyle),
                         onTap: () {
                           context.read<AuthBloc>().add(AuthLogoutEvent());
                           Navigator.pushReplacement(

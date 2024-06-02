@@ -91,7 +91,7 @@ class OrderDescription extends StatelessWidget {
                                     child: Text(
                                       maxLines: 2,
                                       order.address,
-                                      style: headerTextStyleWhite,
+                                      style: headerTextStyle,
                                     ),
                                   ),
                                   const SizedBox(
@@ -145,7 +145,7 @@ class OrderDescription extends StatelessWidget {
                                           width: 10,
                                         ),
                                         Text(order.phoneNumber,
-                                            style: headerTextStyleWhite),
+                                            style: headerTextStyle),
                                       ],
                                     ),
                                     onPressed: () async {
@@ -194,7 +194,7 @@ class OrderDescription extends StatelessWidget {
                                     children: [
                                       Text(
                                         'Информация о заказе',
-                                        style: headerTextStyleWhite,
+                                        style: headerTextStyle,
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
@@ -208,7 +208,7 @@ class OrderDescription extends StatelessWidget {
                                         '\n'
                                         '\n'
                                         'Описание: ${order.review}',
-                                        style: mainTextStyleWhite,
+                                        style: mainTextStyle,
                                       ),
                                     ],
                                   ),

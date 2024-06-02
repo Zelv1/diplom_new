@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
@@ -34,8 +33,6 @@ pw.Widget buildPrintableData(Uint8List? imageBytes) {
 }
 
 Future<Uint8List> getImageBytes(String imageUrl) async {
-  log(imageUrl);
-  log(imageUrl);
   final response = await http.get(Uri.parse(imageUrl));
   return response.bodyBytes;
 }

@@ -18,7 +18,7 @@ void showMessageDialog(BuildContext context, String message) {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('ОК', style: headerTextStyleBlack))
+              child: Text('ОК', style: headerTextStyle))
         ],
       );
     },

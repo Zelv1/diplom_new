@@ -22,7 +22,6 @@ Future<Uint8List> generatePdf(OrderModel order) async {
     '2': 'Наличные',
   };
 
-// Retrieve the values from the maps
   String productType = productTypes[order.goodType] ?? '';
   String paymentMethod = paymentMethods[order.payment] ?? '';
 
@@ -88,51 +87,3 @@ Future<void> printOrder(OrderModel order) async {
     onLayout: (PdfPageFormat format) => Future.value(bytes),
   );
 }
-
-
-
-
-
-
-
-// import 'package:diplom_new/features/models/order_model/order_model.dart';
-// import 'package:printing/printing.dart';
-// import 'package:pdf/pdf.dart';
-// import 'package:pdf/widgets.dart' as pw;
-
-// Future<void> printOrder(OrderModel order) async {
-//   final pdf = pw.Document();
-
-//   pdf.addPage(pw.Page(
-//     pageFormat: PdfPageFormat.a4,
-//     build: (pw.Context context) {
-//       return pw.Column(
-//         crossAxisAlignment: pw.CrossAxisAlignment.start,
-//         children: [
-//           pw.Text('Номер заказа: ${order.id}',
-//               style: const pw.TextStyle(fontSize: 18)),
-//           pw.SizedBox(height: 10),
-//           pw.Text('Заказчик: ${order.iDVendor?.nameOfOrganization}',
-//               style: const pw.TextStyle(fontSize: 16)),
-//           pw.SizedBox(height: 10),
-//           pw.Text('Был доставлен: ${order.iDCourier?.name}',
-//               style: const pw.TextStyle(fontSize: 16)),
-//           pw.SizedBox(height: 20),
-//           pw.Text('Тип товара: ${order.goodType}',
-//               style: const pw.TextStyle(fontSize: 16)),
-//           pw.SizedBox(height: 20),
-//           pw.Text('Способ оплаты: ${order.payment}',
-//               style: const pw.TextStyle(fontSize: 16)),
-//           pw.SizedBox(height: 20),
-//           pw.Text('Связь с заказчиком : ${order.phoneNumber}',
-//               style: const pw.TextStyle(fontSize: 16)),
-//           pw.SizedBox(height: 20),
-//         ],
-//       );
-//     },
-//   ));
-
-//   await Printing.layoutPdf(
-//     onLayout: (_) => Future.value(pdf.save()),
-//   );
-// }

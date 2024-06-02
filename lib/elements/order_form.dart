@@ -127,7 +127,7 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
       SnackBar(
         content: Text(
           message,
-          style: headerTextStyleWhite,
+          style: headerTextStyle,
         ),
       ),
     );
@@ -142,7 +142,7 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
         children: [
           Text(
             labelText,
-            style: headerTextStyleBlack,
+            style: headerTextStyle,
             maxLines: 1,
           ),
           SizedBox(width: MediaQuery.of(context).size.width * 0.02),
@@ -202,7 +202,7 @@ class _OrderFormWidgetState extends State<OrderFormWidget> {
                 context, 'Пожалуйста, заполните все обязательные поля');
           }
         },
-        child: Text('Опубликовать', style: headerTextStyleWhite),
+        child: Text('Опубликовать', style: headerTextStyle),
       ),
     );
   }

@@ -21,15 +21,11 @@ class GetOrderInfoBloc extends Bloc<GetOrderInfoEvent, GetOrderInfoState> {
   final selectedIndexes = <int>{};
 
   GetOrderInfoBloc() : super(GetOrderInfoInitial()) {
-    log('GET ORDER BLOC');
-    log('+++++++++++++++ AUTh DATA +++++++++++++++');
     AuthMiddleware.authData.listen((event) {
-      log('===== event=$event =====');
       token = event.toString();
     });
-    log('+++++++++++++++ USER DATA +++++++++++++++');
+
     AuthMiddleware.user.listen((event) {
-      log('===== event=$event =====');
       vendorId = event.vendor?.id.toString();
       courierId = event.courier?.id.toString();
     });
@@ -44,7 +40,6 @@ class GetOrderInfoBloc extends Bloc<GetOrderInfoEvent, GetOrderInfoState> {
       emit(GetOrderInfoLoading());
       try {
         if (token != null && vendorId != null) {
-          log("Должны отображаться заказы заказчика");
           final repository =
               GetOrderDataVendorRepository(token!, int.parse(vendorId!));
           final order = await repository.getOrderDataVendor();
@@ -52,7 +47,6 @@ class GetOrderInfoBloc extends Bloc<GetOrderInfoEvent, GetOrderInfoState> {
             order: order,
           ));
         } else if (vendorId == null) {
-          log("Должны отображаться заказы курьера");
           final repository = GetOrderDataCourierRepository(token!);
           final order = await repository.getOrderDataCourier();
           emit(GetOrderInfoLoaded(
@@ -81,7 +75,6 @@ class GetOrderInfoBloc extends Bloc<GetOrderInfoEvent, GetOrderInfoState> {
             for (var orderId in orderToDelete) {
               final repository = DeleteOrderRepository(token!, orderId);
               await repository.deleteOrder();
-              log(repository.orderId + repository.token);
             }
 
             add(GetOrdersEvent());

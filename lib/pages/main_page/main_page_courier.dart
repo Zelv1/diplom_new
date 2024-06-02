@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:diplom_new/bloc/deliver_order_bloc/deliver_order_bloc.dart';
 import 'package:diplom_new/bloc/get_order_info_bloc/get_order_info_bloc.dart';
@@ -74,7 +73,7 @@ class _MainPageCourierState extends State<MainPageCourier> {
                       onPressed: () async {
                         try {
                           String? qr = await scanQR();
-                          log(qr!);
+
                           (qr == 'Fail')
                               // ignore: use_build_context_synchronously
                               ? showMessageDialog(context,
@@ -105,17 +104,15 @@ class _MainPageCourierState extends State<MainPageCourier> {
                                                   context
                                                       .read<DeliverOrderBloc>()
                                                       .add(GetDataFromQREvent(
-                                                          orderId: qr));
+                                                          orderId: qr!));
                                                 },
                                                 child: Text('Вперед!',
-                                                    style:
-                                                        headerTextStyleBlack)),
+                                                    style: headerTextStyle)),
                                             TextButton(
                                                 onPressed: () =>
                                                     Navigator.pop(context),
                                                 child: Text('Отмена',
-                                                    style:
-                                                        headerTextStyleBlack))
+                                                    style: headerTextStyle))
                                           ],
                                         );
                                       },
@@ -140,8 +137,6 @@ class _MainPageCourierState extends State<MainPageCourier> {
                   child: BlocBuilder<GetOrderInfoBloc, GetOrderInfoState>(
                       builder: (context, state) {
                     if (state is GetOrderInfoLoaded) {
-                      log(state.selectedOrder.toString());
-
                       return (state.order.isNotEmpty)
                           ? Column(
                               children: [
@@ -193,7 +188,7 @@ class _MainPageCourierState extends State<MainPageCourier> {
                       return Center(
                         child: Text(
                           "Заказов пока нет, ожидайте",
-                          style: headerTextStyleBlack,
+                          style: headerTextStyle,
                         ),
                       );
                     }

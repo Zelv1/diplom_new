@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/edit_profile_data_bloc/edit_profile_data_bloc.dart';
 import 'package:diplom_new/elements/message_dialog.dart';
@@ -45,17 +43,12 @@ class EditProfilePage extends StatelessWidget {
           if (state is EditAddressState) {
             userEditData = userModel.vendor!.address;
             inputFormatter = addressRegex;
-            log(userEditData.toString());
           } else if (state is EditNameState) {
             userEditData = userModel.vendor!.nameOfOrganization;
             inputFormatter = organizationNameRegex;
-            log(userEditData.toString());
           } else if (state is EditNumberState) {
             userEditData = userModel.vendor!.phoneNumber;
             inputFormatter = phoneNumberRegex;
-            log(userEditData.toString());
-          } else {
-            log(state.toString());
           }
           return userEditData;
         },
@@ -67,7 +60,7 @@ class EditProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 20),
                   child: Text(
                     'Внесите новые данные',
-                    style: headerTextStyleBlack,
+                    style: headerTextStyle,
                   ),
                 ),
                 Padding(
@@ -143,8 +136,7 @@ class EditProfilePage extends StatelessWidget {
                           context.read<AuthBloc>().add(AuthCheckCacheEvent());
                         }
                       },
-                      child:
-                          Text('Внести изменения', style: headerTextStyleWhite),
+                      child: Text('Внести изменения', style: headerTextStyle),
                     ),
                   ),
                 ),

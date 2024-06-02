@@ -19,15 +19,11 @@ class GetOrderHistoryBloc
   String? courierId;
 
   GetOrderHistoryBloc() : super(GetOrderHistoryInitial()) {
-    log('GET ORDER BLOC');
-    log('+++++++++++++++ AUTh DATA +++++++++++++++');
     AuthMiddleware.authData.listen((event) {
-      log('===== event=$event =====');
       token = event.toString();
     });
-    log('+++++++++++++++ USER DATA +++++++++++++++');
+
     AuthMiddleware.user.listen((event) {
-      log('===== event=$event =====');
       vendorId = event.vendor?.id.toString();
       courierId = event.courier?.id.toString();
     });

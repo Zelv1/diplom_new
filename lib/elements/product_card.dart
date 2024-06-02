@@ -80,11 +80,11 @@ class ProductCardModel extends StatelessWidget {
                     children: [
                       Text(
                         '${order.id}',
-                        style: mainTextStyleWhite,
+                        style: mainTextStyle,
                       ),
                       Text(
                         'Доставить до ${formatTimeToCard(order.deliverTo.toString())}',
-                        style: mainTextStyleWhite,
+                        style: mainTextStyle,
                       )
                     ],
                   ),
@@ -108,7 +108,7 @@ class ProductCardModel extends StatelessWidget {
                           ),
                           Text(
                             order.address,
-                            style: headerTextStyleBlack,
+                            style: headerTextStyle,
                           )
                         ],
                       ),
@@ -132,8 +132,7 @@ class ProductCardModel extends StatelessWidget {
                             size: 24,
                           ),
                           const SizedBox(width: 7),
-                          Text(getOrderState(order.state),
-                              style: mainTextStyleBlack)
+                          Text(getOrderState(order.state), style: mainTextStyle)
                         ],
                       ),
                     )
@@ -145,8 +144,7 @@ class ProductCardModel extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 5, bottom: 10, left: 13),
                 child: Row(
                   children: [
-                    Text(getPaymentMethod(order.payment),
-                        style: mainTextStyleBlack),
+                    Text(getPaymentMethod(order.payment), style: mainTextStyle),
                     const SizedBox(
                       width: 7,
                     ),

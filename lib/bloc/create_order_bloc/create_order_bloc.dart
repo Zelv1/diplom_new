@@ -13,11 +13,9 @@ class CreateOrderBloc extends Bloc<CreateOrderBlocEvent, CreateOrderBlocState> {
   String? _vendorId;
 
   CreateOrderBloc() : super(CreateOrderBlocInitial()) {
-    log('CREATE ORDER BLOC');
     on<CreateOrderEvent>((event, emit) async {
       emit(OrderCreating());
-      log('============ $_token ============');
-      log('============ $_vendorId ============');
+
       try {
         if (_token != null && _vendorId != null) {}
         final repository = CreateOrderRepository(
@@ -30,7 +28,7 @@ class CreateOrderBloc extends Bloc<CreateOrderBlocEvent, CreateOrderBlocState> {
           event.review,
         );
         await repository.createOrder(_token);
-        log('Success creating');
+
         emit(OrderCreatingSuccessful());
         if (state is OrderCreatingSuccessful) {
           emit(CreateOrderBlocInitial());
@@ -40,14 +38,12 @@ class CreateOrderBloc extends Bloc<CreateOrderBlocEvent, CreateOrderBlocState> {
         emit(OrderCreatingFailed());
       }
     });
-    log('+++++++++++++++ AUTH DATA +++++++++++++++');
+
     AuthMiddleware.authData.listen((event) {
-      log('===== event=$event =====');
       _token = event.toString();
     });
-    log('+++++++++++++++ USER DATA +++++++++++++++');
+
     AuthMiddleware.user.listen((event) {
-      log('===== event=$event =====');
       _vendorId = event.vendor?.id.toString();
     });
   }
