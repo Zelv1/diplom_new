@@ -29,14 +29,14 @@ class _VendorProfileState extends State<VendorProfile> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthSuccessState) {
-          return SmartRefresher(
-            enablePullDown: true,
-            onRefresh: onRefresh,
-            controller: _refreshController,
-            child: Scaffold(
-              body: Column(
-                children: [
-                  Expanded(
+          return Scaffold(
+            body: Column(
+              children: [
+                Expanded(
+                  child: SmartRefresher(
+                    enablePullDown: true,
+                    onRefresh: onRefresh,
+                    controller: _refreshController,
                     child: ListView(
                       padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).padding.bottom,
@@ -136,35 +136,35 @@ class _VendorProfileState extends State<VendorProfile> {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme.of(context).colorScheme.background,
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.exit_to_app),
-                      title: Text('Выйти из аккаунта',
-                          style: headerTextStyleBlack),
-                      onTap: () {
-                        context.read<AuthBloc>().add(AuthLogoutEvent());
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SignInPage()),
-                        );
-                      },
-                    ),
+                ),
+                Container(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.background,
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                  child: ListTile(
+                    leading: const Icon(Icons.exit_to_app),
+                    title:
+                        Text('Выйти из аккаунта', style: headerTextStyleBlack),
+                    onTap: () {
+                      context.read<AuthBloc>().add(AuthLogoutEvent());
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignInPage()),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           );
         }

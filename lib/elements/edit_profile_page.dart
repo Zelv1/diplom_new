@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/edit_profile_data_bloc/edit_profile_data_bloc.dart';
 import 'package:diplom_new/elements/message_dialog.dart';
 
@@ -47,7 +48,7 @@ class EditProfilePage extends StatelessWidget {
             log(userEditData.toString());
           } else if (state is EditNameState) {
             userEditData = userModel.vendor!.nameOfOrganization;
-            inputFormatter = organizationNumberRegex;
+            inputFormatter = organizationNameRegex;
             log(userEditData.toString());
           } else if (state is EditNumberState) {
             userEditData = userModel.vendor!.phoneNumber;
@@ -73,7 +74,7 @@ class EditProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 20),
                   child: ConstrainedBox(
                     constraints:
-                        const BoxConstraints(maxWidth: 350, maxHeight: 55),
+                        const BoxConstraints(maxWidth: 350, maxHeight: 60),
                     child: TextFormField(
                       controller: controllerUserName,
                       textAlign: TextAlign.left,
@@ -86,7 +87,7 @@ class EditProfilePage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10)),
                           focusedBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
-                                  color: Colors.black, width: 1),
+                                  color: Colors.black, width: 2),
                               borderRadius: BorderRadius.circular(11)),
                           hintText: userEditData,
                           prefixIcon: const Icon(Icons.edit_square),
@@ -118,32 +119,29 @@ class EditProfilePage extends StatelessWidget {
                           fixedSize: const Size(350, 55),
                           shape: ContinuousRectangleBorder(
                               borderRadius: BorderRadius.circular(10))),
-                      onPressed: () => {
-                        if (controllerUserName.text.isEmpty)
-                          {
-                            showMessageDialog(
-                                context, 'Пожалуйста, укажите значение')
-                          }
-                        else if (inputFormatter == null ||
+                      onPressed: () async {
+                        if (controllerUserName.text.isEmpty) {
+                          showMessageDialog(
+                              context, 'Пожалуйста, укажите значение');
+                        } else if (inputFormatter == null ||
                             !RegExp(inputFormatter!)
-                                .hasMatch(controllerUserName.text))
-                          {
-                            showMessageDialog(
-                                context, 'Пожалуйста, заполните поле коректно')
-                          }
-                        else
-                          {
-                            context.read<EditProfileDataBloc>().add(
-                                EditProfileEvent(
-                                    newData: controllerUserName.text)),
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const MainPageVendor()),
-                            ),
-                            showMessageDialog(context,
-                                'Изменения будут видны после повторного захода в приложение'),
-                          }
+                                .hasMatch(controllerUserName.text)) {
+                          showMessageDialog(
+                              context, 'Пожалуйста, заполните поле коректно');
+                        } else {
+                          context.read<EditProfileDataBloc>().add(
+                              EditProfileEvent(
+                                  newData: controllerUserName.text));
+                          Navigator.pop(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MainPageVendor()),
+                          );
+
+                          showMessageDialog(
+                              context, 'Изменения внесены успешно');
+                          context.read<AuthBloc>().add(AuthCheckCacheEvent());
+                        }
                       },
                       child:
                           Text('Внести изменения', style: headerTextStyleWhite),

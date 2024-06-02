@@ -3,5 +3,5 @@ const String addressRegex =
 const String phoneNumberRegex =
     r'^\+?375\(?([29|44|33])\)?[-. ]?([0-9]{3})[-. ]?([0-9]{2})[-. ]?([0-9]{3})$';
 
-const String organizationNumberRegex =
-    r'^(ОАО|ЗАО|ООО|ИП|ЧУП|КУП|ГУП)\s(([A-Za-z]+)|([А-Яа-я]+))\s*$';
+const String organizationNameRegex =
+    r'^[a-zA-Zа-яА-ЯёЁ]+(?:[\s-][a-zA-Zа-яА-ЯёЁ]+)*?(?:\s(?:ООО|ЗАО|ОАО|ПАО|ТОВ|ИП|ЛЛЦ)\s*[a-zA-Zа-яА-ЯёЁ]+(?:[\s-][a-zA-Zа-яА-ЯёЁ]+)*?)?$';
