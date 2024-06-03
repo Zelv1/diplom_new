@@ -82,6 +82,13 @@ class AppBarMenu extends StatelessWidget {
                         },
                       ),
                       const UnderLine(),
+                      ListTile(
+                        leading: const Icon(Icons.info_outline),
+                        title: Text('О нас ', style: mainTextStyle),
+                        onTap: () => showMessageDialog(context,
+                            'Приложение разработано учащимся группы 52ТП Зеленкевичем Иваном'),
+                      ),
+                      const UnderLine(),
                     ],
                   ),
                 ),

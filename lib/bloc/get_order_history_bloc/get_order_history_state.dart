@@ -31,10 +31,13 @@ class GetOrderHistoryLoaded extends GetOrderHistoryState {
         return a.deliverTo.compareTo(b.deliverTo);
       },
     );
+
     return sortedorders
         .where((element) =>
-            element.deliverTo.day == DateTime.now().day ||
-            element.deliverTo.day == DateTime.now().day - 1)
+            (element.deliverTo.day == DateTime.now().day &&
+                element.deliverTo.month == DateTime.now().month) ||
+            (element.deliverTo.day == DateTime.now().day - 1 &&
+                element.deliverTo.month == DateTime.now().month))
         .toList()
         .reversed
         .toList();

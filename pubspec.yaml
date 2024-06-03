@@ -55,7 +55,7 @@ dependencies:
   auto_size_text: ^3.0.0
   pull_to_refresh: ^2.0.0
   google_fonts: ^6.2.1
-
+  flutter_launcher_icons: ^0.13.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,6 +80,22 @@ flutter:
 
   assets:
     - assets/fonts/
+    - assets/icons/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/android/play_store_512.png"
+  web:
+    generate: true
+    image_path: "assets/icons/android/play_store_512.png"
+    
+  windows:
+    generate: true
+    image_path: "assets/icons/android/play_store_512.png"
+  macos:
+    generate: true
+    image_path: "assets/icons/android/play_store_512.png"
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

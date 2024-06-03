@@ -183,14 +183,14 @@ class _MainPageCourierState extends State<MainPageCourier> {
                                   ),
                               ],
                             )
-                          : const Center(child: CircularProgressIndicator());
+                          : Center(
+                              child: Text(
+                                "Заказов пока нет, ожидайте",
+                                style: headerTextStyle,
+                              ),
+                            );
                     } else {
-                      return Center(
-                        child: Text(
-                          "Заказов пока нет, ожидайте",
-                          style: headerTextStyle,
-                        ),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     }
                   }),
                 ),

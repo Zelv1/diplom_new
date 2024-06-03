@@ -65,6 +65,8 @@ class _VendorProfileState extends State<VendorProfile> {
                             Text(
                               state.user.vendor!.nameOfOrganization,
                               style: authTag,
+                              textAlign: TextAlign.center,
+                              maxLines: null,
                             ),
                             SizedBox(
                                 height:
