@@ -3,6 +3,7 @@
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
 import 'package:diplom_new/bloc/edit_profile_data_bloc/edit_profile_data_bloc.dart';
 import 'package:diplom_new/elements/edit_profile_page.dart';
+import 'package:diplom_new/elements/vendor_info.dart';
 import 'package:diplom_new/pages/sign_in_page/sign_in_page.dart';
 import 'package:diplom_new/util/text_styles.dart';
 import 'package:diplom_new/util/underline.dart';
@@ -130,6 +131,20 @@ class _VendorProfileState extends State<VendorProfile> {
                                         builder: (context) => EditProfilePage(
                                               userModel: state.user,
                                             )));
+                              },
+                            ),
+                            GrayLine(context),
+                            ListTile(
+                              leading: const Icon(Icons.question_mark),
+                              title: Text('Справка', style: headerTextStyle),
+                              trailing:
+                                  const Icon(Icons.arrow_forward_ios_rounded),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const VendorInfo()),
+                                );
                               },
                             ),
                             GrayLine(context),

@@ -1,4 +1,5 @@
 import 'package:diplom_new/bloc/auth_bloc/auth_bloc.dart';
+import 'package:diplom_new/elements/courier_info.dart';
 import 'package:diplom_new/elements/message_dialog.dart';
 import 'package:diplom_new/pages/history_page/history_page_courier.dart';
 import 'package:diplom_new/pages/main_page/main_page_courier.dart';
@@ -73,7 +74,7 @@ class AppBarMenu extends StatelessWidget {
                         onTap: () async {
                           try {
                             await FlutterPhoneDirectCaller.callNumber(
-                                '+375295601300');
+                                '+375333522592');
                           } catch (e) {
                             // ignore: use_build_context_synchronously
                             showMessageDialog(context,
@@ -87,6 +88,18 @@ class AppBarMenu extends StatelessWidget {
                         title: Text('О нас ', style: mainTextStyle),
                         onTap: () => showMessageDialog(context,
                             'Приложение разработано учащимся группы 52ТП Зеленкевичем Иваном'),
+                      ),
+                      const UnderLine(),
+                      ListTile(
+                        leading: const Icon(Icons.question_mark),
+                        title: Text('Справка ', style: mainTextStyle),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CourierInfo()),
+                          );
+                        },
                       ),
                       const UnderLine(),
                     ],
