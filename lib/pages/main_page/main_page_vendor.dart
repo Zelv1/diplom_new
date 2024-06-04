@@ -186,7 +186,12 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          state.selectedOrder?.state != '2'
+                          state.order
+                                      .where(
+                                          (element) => element.isActive == true)
+                                      .first
+                                      .state !=
+                                  '2'
                               ? IconButton(
                                   onPressed: () {
                                     _getOrderInfoBloc
@@ -232,7 +237,9 @@ class _GeneralPageVendorState extends State<GeneralPageVendor> {
                         ],
                       ),
                     if (state.selectedCount() > 1)
-                      (state.selectedOrder?.state != '2')
+                      (!state.order
+                              .where((element) => element.isActive == true)
+                              .any((element) => element.state != '2'))
                           ? IconButton(
                               onPressed: () {
                                 _getOrderInfoBloc
